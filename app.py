@@ -1,6 +1,6 @@
 import logging
 from flask import Flask, render_template, request, jsonify
-from app_cfg import TELEGRAM_BOT_TOKEN, DEBUG, bot_lport
+from app_cfg import TELEGRAM_BOT_TOKEN, DEBUG, bot_lport, logfpath
 import hashlib
 import hmac
 import json
