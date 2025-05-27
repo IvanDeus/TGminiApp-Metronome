@@ -50,7 +50,7 @@ if action == "start":
         psutil.Popen(
         ["gunicorn", 
          "-b", "localhost:{}".format(bot_lport), 
-         "-w", "3", 
+         "-w", "2", 
          "-t", "65", 
          "--log-file={}".format(logfpath), 
          "app:app", 
