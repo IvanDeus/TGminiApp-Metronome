@@ -5,6 +5,7 @@ import hashlib
 import hmac
 import json
 import sqlite3
+import os
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -14,20 +15,18 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 DATABASE = 'users_db.sqlite'
 
 def get_db():
-    db = getattr(app, '_database', None)
-    if db is None:
-        db = app._database = sqlite3.connect(DATABASE)
-        # Enable foreign key support (optional)
-        db.execute('PRAGMA foreign_keys = ON')
-        db.row_factory = sqlite3.Row  # Access rows as dictionaries
-    return db
+    """Opens a new database connection if there is none yet for the current application context."""
+    if not hasattr(g, 'sqlite_db'):
+        g.sqlite_db = sqlite3.connect(DATABASE)
+        g.sqlite_db.row_factory = sqlite3.Row
+    return g.sqlite_db
 
 @app.teardown_appcontext
 def close_connection(exception):
-    db = getattr(app, '_database', None)
+    db = getattr(g, 'sqlite_db', None)
     if db is not None:
         db.close()
-
+        
 def init_db():
     with app.app_context():
         db = get_db()
@@ -121,9 +120,12 @@ def init_telegram():
         print("Error parsing initData:", e)
         return jsonify({"error": "Invalid initData"}), 400
 
-
 if __name__ == '__main__':
-    # Initialize DB schema if needed
-    init_db()  # Run once to create tables
+    # Only initialize DB if the file doesn't exist
+    if not os.path.exists(DATABASE):
+        with app.app_context():
+            init_db()
+            print("Initialized the database.")
+    
     logging.basicConfig(filename=logfpath, level=logging.INFO)
     app.run(host='127.0.0.1', port=bot_lport, debug=DEBUG)
