@@ -76,7 +76,7 @@ if (window.Telegram && Telegram.WebApp) {
     })
     .then(response => response.json())
     .then(data => {
-        // handle success
+    updateBPMDisplay()
     })
     .catch(error => {
         console.error('Init failed:', error);
