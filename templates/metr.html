@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Metronome</title>
     <link rel="stylesheet" href="/static/css/styles.css">
-    <script src="https://telegram.org/js/telegram-web-app.js "></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 <div class="credits">[ ivan deus ]</div>
@@ -60,7 +60,6 @@
             display.textContent = `BPM: ${paddedBPM}`;
         }
     }
-
     // Telegram WebApp Init
     if (window.Telegram && Telegram.WebApp) {
         const initData = Telegram.WebApp.initData;
@@ -81,7 +80,7 @@
             const container = document.querySelector('.container');
             container.innerHTML = `
                 <div class="telegram-error">
-                ${no_tg}
+                ${ERROR_MESSAGES['no_tg']}
                 </div>`;
         });
     }
