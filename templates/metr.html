@@ -77,6 +77,7 @@ if (window.Telegram && Telegram.WebApp) {
     .then(response => response.json())
     .then(data => {
     currentBPM = data.bpm || 90;
+    document.getElementById('profile-pic').style.backgroundImage = `url('${data.photo_url}')`;
     updateBPMDisplay();
     })
     .catch(error => {
