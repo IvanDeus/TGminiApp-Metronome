@@ -1,0 +1,81 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #cecece;
+    margin: 0;
+    padding: 10px;
+    touch-action: manipulation;
+    user-select: none; /* Prevent text selection */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.container {
+    max-width: 360px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.credits {
+    text-align: center;
+    color: #555;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+#profile-pic {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px auto;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #ddd;
+}
+
+.status {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.volume-control {
+    height: 20px;
+    background: #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.volume-level {
+    height: 100%;
+    width: 0%;
+    background: #4caf50;
+    transition: width 0.2s ease;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.control-btn {
+    background: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.telegram-error {
+    color: red;
+    font-weight: bold;
+}
