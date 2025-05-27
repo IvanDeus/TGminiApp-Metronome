@@ -55,15 +55,20 @@ def index():
 def init_telegram():
     raw_data = request.form.get('initData', '')
     app.logger.info("Raw initData received: %s", raw_data)
+    
     if not raw_data:
         return jsonify({"error": "Missing initData"}), 400
+
     try:
         parsed_data = parse_qs(raw_data)
         data_dict = {k: v[0] for k, v in parsed_data.items()}
+
         if not verify_telegram_data(data_dict):
             return jsonify({"error": "Invalid signature"}), 401
+
         if 'user' not in data_dict:
             return jsonify({"error": "Missing user in initData"}), 400
+
         user_data = json.loads(data_dict['user'])
         user_id = user_data['id']
         first_name = user_data.get('first_name', 'Unknown')
@@ -72,11 +77,14 @@ def init_telegram():
         language_code = user_data.get('language_code', 'en')
         is_premium = user_data.get('is_premium', False)
         photo_url = user_data.get('photo_url', '')
+
         db = get_db()
         cur = db.cursor()
+
         # Check if user exists
         cur.execute("SELECT * FROM telegram_users WHERE user_id = ?", (user_id,))
         existing_user = cur.fetchone()
+
         if not existing_user:
             cur.execute("""
                 INSERT INTO telegram_users (
@@ -97,24 +105,34 @@ def init_telegram():
                     photo_url = ?
                 WHERE user_id = ?
             """, (first_name, username, photo_url, user_id))
+
         db.commit()
+
+        # Get BPM before returning
+        cur.execute("SELECT bpm FROM telegram_users WHERE user_id = ?", (user_id,))
+        bpm = cur.fetchone()['bpm']
+
         return jsonify({
             'user_id': user_id,
             'first_name': first_name,
             'username': username,
-            'photo_url': photo_url
+            'photo_url': photo_url,
+            'bpm': bpm
         })
-        cur.execute("SELECT bpm FROM telegram_users WHERE user_id = ?", (user_id,))
-        bpm = cur.fetchone()['bpm']
-        return jsonify({ ..., 'bpm': bpm })
+
     except json.JSONDecodeError as je:
         app.logger.error("JSON decode error: %s", str(je))
         return jsonify({"error": "Invalid user JSON"}), 400
+
+    except sqlite3.Error as se:
+        app.logger.error("Database error: %s", str(se))
+        return jsonify({"error": "Internal server error"}), 500
+
     except Exception as e:
         app.logger.error("Error processing initData: %s", str(e))
         app.logger.error(traceback.format_exc())
         return jsonify({"error": "Internal server error"}), 500
-       
+        
 if __name__ == '__main__':
     # Only initialize DB if the file doesn't exist
     if not os.path.exists(DATABASE):
