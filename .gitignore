@@ -1,0 +1,5 @@
+# ignore config file for security
+app_cfg.py
+__app.py
+__pycache__/
+users_db.json
