@@ -65,9 +65,32 @@ def init_telegram():
         data_dict = dict(x.split("=", 1) for x in raw_data.split("&"))
         if not verify_telegram_data(data_dict):
             return jsonify({"error": "Invalid signature"}), 401
+@app.route('/init_telegram', methods=['POST'])
+def init_telegram():
+    raw_data = request.form.get('initData', '')
+    app.logger.info("Raw initData received: %s", raw_data)
+
+    if not raw_data:
+        return jsonify({"error": "Missing initData"}), 400
+
+    try:
+        parts = raw_data.split("&")
+        data_dict = {}
+
+        for part in parts:
+            if "=" in part:
+                key, value = part.split("=", 1)
+                data_dict[key] = value
+            else:
+                app.logger.warning("Skipping malformed initData part: %s", part)
+
+        if not verify_telegram_data(data_dict):
+            return jsonify({"error": "Invalid signature"}), 401
+
+        if 'user' not in data_dict:
+            return jsonify({"error": "Missing user in initData"}), 400
 
         user_data = json.loads(data_dict['user'])
-
         user_id = user_data['id']
         first_name = user_data.get('first_name', 'Unknown')
         last_name = user_data.get('last_name', '')
@@ -78,7 +101,6 @@ def init_telegram():
 
         db = get_db()
         cur = db.cursor()
-
         # Check if user exists
         cur.execute("SELECT * FROM telegram_users WHERE user_id = ?", (user_id,))
         existing_user = cur.fetchone()
@@ -112,12 +134,14 @@ def init_telegram():
             'username': username,
             'photo_url': photo_url
         })
-
+    except json.JSONDecodeError as je:
+        app.logger.error("JSON decode error: %s", str(je))
+        return jsonify({"error": "Invalid user JSON"}), 400
     except Exception as e:
-        db.rollback()
-        print("Error parsing initData:", e)
-        return jsonify({"error": "Invalid initData"}), 400
-
+        app.logger.error("Error processing initData: %s", str(e))
+        app.logger.error(traceback.format_exc())
+        return jsonify({"error": "Internal server error"}), 500
+       
 if __name__ == '__main__':
     # Only initialize DB if the file doesn't exist
     if not os.path.exists(DATABASE):
