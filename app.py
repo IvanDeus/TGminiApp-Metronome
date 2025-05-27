@@ -6,6 +6,7 @@ import hmac
 import json
 import sqlite3
 import os
+from urllib.parse import unquote, parse_qs
 # Initialize Flask app
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -57,14 +58,8 @@ def init_telegram():
     if not raw_data:
         return jsonify({"error": "Missing initData"}), 400
     try:
-        parts = raw_data.split("&")
-        data_dict = {}
-        for part in parts:
-            if "=" in part:
-                key, value = part.split("=", 1)
-                data_dict[key] = value
-            else:
-                app.logger.warning("Skipping malformed initData part: %s", part)
+        parsed_data = parse_qs(raw_data)
+        data_dict = {k: v[0] for k, v in parsed_data.items()}
         if not verify_telegram_data(data_dict):
             return jsonify({"error": "Invalid signature"}), 401
         if 'user' not in data_dict:
@@ -102,15 +97,16 @@ def init_telegram():
                     photo_url = ?
                 WHERE user_id = ?
             """, (first_name, username, photo_url, user_id))
-
         db.commit()
-
         return jsonify({
             'user_id': user_id,
             'first_name': first_name,
             'username': username,
             'photo_url': photo_url
         })
+        cur.execute("SELECT bpm FROM telegram_users WHERE user_id = ?", (user_id,))
+        bpm = cur.fetchone()['bpm']
+        return jsonify({ ..., 'bpm': bpm })
     except json.JSONDecodeError as je:
         app.logger.error("JSON decode error: %s", str(je))
         return jsonify({"error": "Invalid user JSON"}), 400
