@@ -3,3 +3,4 @@ app_cfg.py
 __app.py
 __pycache__/
 users_db.json
+users_db.sqlite
