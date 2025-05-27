@@ -54,27 +54,21 @@ def index():
 def init_telegram():
     raw_data = request.form.get('initData', '')
     app.logger.info("Raw initData received: %s", raw_data)
-
     if not raw_data:
         return jsonify({"error": "Missing initData"}), 400
-
     try:
         parts = raw_data.split("&")
         data_dict = {}
-
         for part in parts:
             if "=" in part:
                 key, value = part.split("=", 1)
                 data_dict[key] = value
             else:
                 app.logger.warning("Skipping malformed initData part: %s", part)
-
         if not verify_telegram_data(data_dict):
             return jsonify({"error": "Invalid signature"}), 401
-
         if 'user' not in data_dict:
             return jsonify({"error": "Missing user in initData"}), 400
-
         user_data = json.loads(data_dict['user'])
         user_id = user_data['id']
         first_name = user_data.get('first_name', 'Unknown')
@@ -83,13 +77,11 @@ def init_telegram():
         language_code = user_data.get('language_code', 'en')
         is_premium = user_data.get('is_premium', False)
         photo_url = user_data.get('photo_url', '')
-
         db = get_db()
         cur = db.cursor()
         # Check if user exists
         cur.execute("SELECT * FROM telegram_users WHERE user_id = ?", (user_id,))
         existing_user = cur.fetchone()
-
         if not existing_user:
             cur.execute("""
                 INSERT INTO telegram_users (
