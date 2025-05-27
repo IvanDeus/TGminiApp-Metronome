@@ -76,7 +76,8 @@ if (window.Telegram && Telegram.WebApp) {
     })
     .then(response => response.json())
     .then(data => {
-    updateBPMDisplay()
+    currentBPM = data.bpm || 90;
+    updateBPMDisplay();
     })
     .catch(error => {
         console.error('Init failed:', error);
