@@ -6,26 +6,24 @@ import hmac
 import json
 import sqlite3
 import os
-
 # Initialize Flask app
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-
 # Database initialization
 DATABASE = 'users_db.sqlite'
-
 def get_db():
     """Opens a new database connection if there is none yet for the current application context."""
-    if not hasattr(g, 'sqlite_db'):
-        g.sqlite_db = sqlite3.connect(DATABASE)
-        g.sqlite_db.row_factory = sqlite3.Row
-    return g.sqlite_db
+    if not hasattr(g, '_sqlite_db'):
+        g._sqlite_db = sqlite3.connect(DATABASE)
+        g._sqlite_db.row_factory = sqlite3.Row
+    return g._sqlite_db
 
 @app.teardown_appcontext
 def close_connection(exception):
-    db = getattr(g, 'sqlite_db', None)
+    db = getattr(g, '_sqlite_db', None)
     if db is not None:
         db.close()
+        app.logger.debug("Closed SQLite connection.")
         
 def init_db():
     with app.app_context():
