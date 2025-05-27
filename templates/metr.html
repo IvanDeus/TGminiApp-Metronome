@@ -61,29 +61,28 @@
         }
     }
     // Telegram WebApp Init
-    if (window.Telegram && Telegram.WebApp) {
-        const initData = Telegram.WebApp.initData;
-        fetch('init_telegram', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: `initData=${encodeURIComponent(initData)}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            window.currentUserData = data;
-            updateBPMDisplay();
-        })
-        .catch(error => {
-            console.error('Telegram init failed:', error);
-            const container = document.querySelector('.container');
-            container.innerHTML = `
-                <div class="telegram-error">
-                ${ERROR_MESSAGES['no_tg']}
-                </div>`;
-        });
+if (window.Telegram && Telegram.WebApp) {
+    const initData = Telegram.WebApp.initData;
+    if (!initData) {
+        document.body.innerHTML = "<div class='telegram-error'>Not running inside Telegram</div>";
+        return;
     }
+    fetch('init_telegram', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `initData=${encodeURIComponent(initData)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        // handle success
+    })
+    .catch(error => {
+        console.error('Init failed:', error);
+        document.body.innerHTML = `<div class="telegram-error">Init failed: ${error.message}</div>`;
+    });
+}
   document.getElementById('tempo-up').onclick = () => {
         if (currentBPM < 320) {
             currentBPM += 4;
