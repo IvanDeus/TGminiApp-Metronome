@@ -125,6 +125,6 @@ if __name__ == '__main__':
         with app.app_context():
             init_db()
             print("Initialized the database.")
-    
-    logging.basicConfig(filename=logfpath, level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(levelname)s: %(message)s')
+    #logging.basicConfig(filename=logfpath, level=logging.INFO)
     app.run(host='127.0.0.1', port=bot_lport, debug=DEBUG)
