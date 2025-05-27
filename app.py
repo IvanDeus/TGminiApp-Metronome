@@ -17,24 +17,19 @@ def get_db():
         g._sqlite_db = sqlite3.connect(DATABASE)
         g._sqlite_db.row_factory = sqlite3.Row
     return g._sqlite_db
-
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_sqlite_db', None)
     if db is not None:
         db.close()
         app.logger.debug("Closed SQLite connection.")
-        
+       
 def init_db():
     with app.app_context():
         db = get_db()
         with app.open_resource('schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
-
-ERROR_MESSAGES = {
-    'no_tg': 'This app only works inside Telegram.'
-}
 
 def verify_telegram_data(data):
     """
@@ -48,23 +43,13 @@ def verify_telegram_data(data):
     hmac_hash = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
     return hmac_hash == received_hash
 
-
 @app.route('/')
 def index():
     return render_template(
         'metr.html',
-        ERROR_MESSAGES=ERROR_MESSAGES,
         photo_url=request.args.get('photo_url', '')
     )
 
-
-@app.route('/init_telegram', methods=['POST'])
-def init_telegram():
-    raw_data = request.form.get('initData', '')
-    try:
-        data_dict = dict(x.split("=", 1) for x in raw_data.split("&"))
-        if not verify_telegram_data(data_dict):
-            return jsonify({"error": "Invalid signature"}), 401
 @app.route('/init_telegram', methods=['POST'])
 def init_telegram():
     raw_data = request.form.get('initData', '')
