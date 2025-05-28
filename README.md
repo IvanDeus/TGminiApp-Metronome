@@ -1,4 +1,4 @@
-# TGminiApp-Metronome
+## TGminiApp-Metronome
 # Telegram Mini App: Simple Metronome
 
 A simple metronome mini app that runs inside **Telegram WebApp** environment using **Flask backend** and **SQLite** for storing user BPM preferences.
