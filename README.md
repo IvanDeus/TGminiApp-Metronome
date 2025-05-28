@@ -29,7 +29,7 @@ A simple metronome mini app that runs inside **Telegram WebApp** environment usi
 
 ### ⚙️ Server Setup (for production)
 
-- Ubuntu/Debian server
+- Linux (Ubuntu/Redhat) server
 - Nginx
 - Certbot (Let’s Encrypt SSL)
 - Domain name with DNS configured
