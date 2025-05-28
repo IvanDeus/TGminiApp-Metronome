@@ -61,13 +61,14 @@
         }
     }
     // Telegram WebApp Init
-if (window.Telegram && Telegram.WebApp) {
+function initTelegramApp() {
     const initData = Telegram.WebApp.initData;
     if (!initData) {
-        document.body.innerHTML = "<div class='telegram-error'>Not running inside Telegram</div>";
+        document.body.innerHTML = "<div class='telegram-error'>No Telegram initData found</div>";
         return;
     }
-    fetch('init_telegram', {
+
+    fetch('/init_telegram', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -76,15 +77,23 @@ if (window.Telegram && Telegram.WebApp) {
     })
     .then(response => response.json())
     .then(data => {
-    currentBPM = data.bpm || 90;
-    document.getElementById('profile-pic').style.backgroundImage = `url('${data.photo_url}')`;
-    updateBPMDisplay();
+        currentBPM = data.bpm || 90;
+        document.getElementById('profile-pic').style.backgroundImage = `url('${data.photo_url}')`;
+        updateBPMDisplay();
     })
     .catch(error => {
         console.error('Init failed:', error);
         document.body.innerHTML = `<div class="telegram-error">Init failed: ${error.message}</div>`;
     });
 }
+
+// Detect if running inside Telegram
+if (window.Telegram && Telegram.WebApp) {
+    initTelegramApp();
+} else {
+    document.body.innerHTML = "<div class='telegram-error'>This app only works inside Telegram</div>";
+}
+    
   document.getElementById('tempo-up').onclick = () => {
         if (currentBPM < 320) {
             currentBPM += 4;
