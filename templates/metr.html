@@ -62,36 +62,48 @@
     }
 
 // === TELEGRAM INIT FUNCTION ===
+if (window.Telegram && Telegram.WebApp) {
+    initTelegramApp();
+} else {
+    showErrorMessage("This app only works inside Telegram");
+}
+    
 function initTelegramApp() {
     const initData = Telegram.WebApp.initData;
     if (!initData) {
-        document.body.innerHTML = "<div class='telegram-error'>No Telegram initData found</div>";
+        showErrorMessage("No Telegram initData found");
         return;
     }
 
-    fetch('/init_telegram', {
+    fetch('init_telegram', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: `initData=${encodeURIComponent(initData)}`
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+    })
     .then(data => {
+        // Now it's safe to use DOM elements
         currentBPM = data.bpm || 90;
-        document.getElementById('profile-pic').style.backgroundImage = `url('${data.photo_url}')`;
+        const profilePic = document.getElementById('profile-pic');
+        if (profilePic) {
+            profilePic.style.backgroundImage = `url('${data.photo_url}')`;
+        }
+
+        setupButtonHandlers(); // Only now attach click handlers
         updateBPMDisplay();
     })
     .catch(error => {
+        showErrorMessage(`Init failed: ${error.message}`);
         console.error('Init failed:', error);
-        document.body.innerHTML = `<div class="telegram-error">Init failed: ${error.message}</div>`;
     });
 }
 
-// === ONLY RUN IF IN TELEGRAM ===
-if (window.Telegram && Telegram.WebApp) {
-    initTelegramApp();
-
+function setupButtonHandlers() {
     document.getElementById('tempo-up').onclick = () => {
         if (currentBPM < 320) {
             currentBPM += 4;
@@ -105,13 +117,10 @@ if (window.Telegram && Telegram.WebApp) {
             updateBPMDisplay();
         }
     };
+}
 
-    document.body.addEventListener('click', () => {
-        if (audioContext.state === 'suspended') audioContext.resume();
-    }, { once: true });
-
-} else {
-    document.body.innerHTML = "<div class='telegram-error'>This app only works inside Telegram</div>";
+function showErrorMessage(message) {
+    document.body.innerHTML = `<div class="telegram-error">${message}</div>`;
 }
     // Disable context menu
  document.addEventListener('contextmenu', function (e) {
