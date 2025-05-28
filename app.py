@@ -6,7 +6,7 @@ import hmac
 import json
 import sqlite3
 import os
-from urllib.parse import unquote, parse_qs
+from urllib.parse import unquote, parse_qs, unquote_plus
 # Initialize Flask app
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
