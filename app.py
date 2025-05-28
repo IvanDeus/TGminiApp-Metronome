@@ -37,12 +37,30 @@ def verify_telegram_data(data):
     Verify Telegram init data signature
     https://core.telegram.org/bots/webapps #validating-data
     """
-    secret_key = hashlib.sha256(TELEGRAM_BOT_TOKEN.encode()).digest()
-    received_hash = data.get("hash", "")
-    data.pop("hash", None)
-    data_check_string = "\n".join(f"{k}={v}" for k, v in sorted(data.items()))
-    hmac_hash = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
-    return hmac_hash == received_hash
+    # 1. Extract 'hash' field and remove it from the data
+    received_hash = data.pop("hash", "")
+    
+    # 2. Sort the remaining parameters alphabetically by key
+    data_check_arr = []
+    for key in sorted(data.keys()):
+        value = data[key]
+        # If value contains '=', escape it before joining
+        if isinstance(value, str) and '=' in value:
+            value = value.replace('=', r'\=')
+        data_check_arr.append(f"{key}={value}")
+    
+    data_check_string = "\n".join(data_check_arr)
+
+    # 3. Generate secret_key = HMAC-SHA256("WebAppData", bot_token)
+    secret_key = hmac.new("WebAppData".encode(), TELEGRAM_BOT_TOKEN.encode(), hashlib.sha256).digest()
+
+    # 4. Compute HMAC-SHA256 of data_check_string with secret_key
+    calculated_hash = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
+
+    app.logger.info("Received hash: %s", received_hash)
+    app.logger.info("Calculated hash: %s", calculated_hash)
+    app.logger.info("Data check string:\n%s", data_check_string)
+    return calculated_hash == received_hash
 
 @app.route('/')
 def index():
@@ -55,7 +73,7 @@ def index():
 def init_telegram():
     raw_data = request.form.get('initData', '')
     app.logger.info("Raw initData received: %s", raw_data)
-    
+    app.logger.info("Unquoted initData: %s", unquote_plus(raw_data))    
     if not raw_data:
         return jsonify({"error": "Missing initData"}), 400
 
