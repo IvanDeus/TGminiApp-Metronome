@@ -60,7 +60,8 @@
             display.textContent = `BPM: ${paddedBPM}`;
         }
     }
-    // Telegram WebApp Init
+
+// === TELEGRAM INIT FUNCTION ===
 function initTelegramApp() {
     const initData = Telegram.WebApp.initData;
     if (!initData) {
@@ -87,29 +88,31 @@ function initTelegramApp() {
     });
 }
 
-// Detect if running inside Telegram
+// === ONLY RUN IF IN TELEGRAM ===
 if (window.Telegram && Telegram.WebApp) {
     initTelegramApp();
-} else {
-    document.body.innerHTML = "<div class='telegram-error'>This app only works inside Telegram</div>";
-}
-    
-  document.getElementById('tempo-up').onclick = () => {
+
+    document.getElementById('tempo-up').onclick = () => {
         if (currentBPM < 320) {
             currentBPM += 4;
             updateBPMDisplay();
         }
     };
-  document.getElementById('tempo-down').onclick = () => {
+
+    document.getElementById('tempo-down').onclick = () => {
         if (currentBPM > 24) {
             currentBPM -= 4;
             updateBPMDisplay();
         }
     };
-    // Resume AudioContext on interaction
- document.body.addEventListener('click', () => {
+
+    document.body.addEventListener('click', () => {
         if (audioContext.state === 'suspended') audioContext.resume();
     }, { once: true });
+
+} else {
+    document.body.innerHTML = "<div class='telegram-error'>This app only works inside Telegram</div>";
+}
     // Disable context menu
  document.addEventListener('contextmenu', function (e) {
         e.preventDefault();
