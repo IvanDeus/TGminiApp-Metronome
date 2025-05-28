@@ -22,7 +22,7 @@ A simple metronome mini app that runs inside **Telegram WebApp** environment usi
 ### 💻 Local Development Tools
 
 - Python 3.8+
-- [ngrok](https://ngrok.com/ ) (for local HTTPS tunneling)
+- gunicorn
 - Flask
 - SQLite
 - Telegram account with bot created via BotFather
