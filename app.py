@@ -18,12 +18,13 @@ def get_db():
         g._sqlite_db = sqlite3.connect(DATABASE)
         g._sqlite_db.row_factory = sqlite3.Row
     return g._sqlite_db
+    
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, '_sqlite_db', None)
     if db is not None:
         db.close()
-        app.logger.debug("Closed SQLite connection.")
+        #app.logger.debug("Closed SQLite connection.")
        
 def init_db():
     with app.app_context():
@@ -39,7 +40,6 @@ def verify_telegram_data(data):
     """
     # 1. Extract 'hash' field and remove it from the data
     received_hash = data.pop("hash", "")
-    
     # 2. Sort the remaining parameters alphabetically by key
     data_check_arr = []
     for key in sorted(data.keys()):
@@ -48,18 +48,14 @@ def verify_telegram_data(data):
         if isinstance(value, str) and '=' in value:
             value = value.replace('=', r'\=')
         data_check_arr.append(f"{key}={value}")
-    
     data_check_string = "\n".join(data_check_arr)
-
     # 3. Generate secret_key = HMAC-SHA256("WebAppData", bot_token)
     secret_key = hmac.new("WebAppData".encode(), TELEGRAM_BOT_TOKEN.encode(), hashlib.sha256).digest()
-
     # 4. Compute HMAC-SHA256 of data_check_string with secret_key
     calculated_hash = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
-
-    app.logger.info("Received hash: %s", received_hash)
-    app.logger.info("Calculated hash: %s", calculated_hash)
-    app.logger.info("Data check string:\n%s", data_check_string)
+    #app.logger.info("Received hash: %s", received_hash)
+    #app.logger.info("Calculated hash: %s", calculated_hash)
+    #app.logger.info("Data check string:\n%s", data_check_string)
     return calculated_hash == received_hash
 
 @app.route('/')
@@ -72,11 +68,10 @@ def index():
 @app.route('/init_telegram', methods=['POST'])
 def init_telegram():
     raw_data = request.form.get('initData', '')
-    app.logger.info("Raw initData received: %s", raw_data)
-    app.logger.info("Unquoted initData: %s", unquote_plus(raw_data))    
+    #app.logger.info("Raw initData received: %s", raw_data)
+    #app.logger.info("Unquoted initData: %s", unquote_plus(raw_data))    
     if not raw_data:
         return jsonify({"error": "Missing initData"}), 400
-
     try:
         parsed_data = parse_qs(raw_data)
         data_dict = {k: v[0] for k, v in parsed_data.items()}
@@ -98,11 +93,9 @@ def init_telegram():
 
         db = get_db()
         cur = db.cursor()
-
         # Check if user exists
         cur.execute("SELECT * FROM telegram_users WHERE user_id = ?", (user_id,))
         existing_user = cur.fetchone()
-
         if not existing_user:
             cur.execute("""
                 INSERT INTO telegram_users (
@@ -123,13 +116,10 @@ def init_telegram():
                     photo_url = ?
                 WHERE user_id = ?
             """, (first_name, username, photo_url, user_id))
-
         db.commit()
-
         # Get BPM before returning
         cur.execute("SELECT bpm FROM telegram_users WHERE user_id = ?", (user_id,))
         bpm = cur.fetchone()['bpm']
-
         return jsonify({
             'user_id': user_id,
             'first_name': first_name,
@@ -137,15 +127,12 @@ def init_telegram():
             'photo_url': photo_url,
             'bpm': bpm
         })
-
     except json.JSONDecodeError as je:
         app.logger.error("JSON decode error: %s", str(je))
         return jsonify({"error": "Invalid user JSON"}), 400
-
     except sqlite3.Error as se:
         app.logger.error("Database error: %s", str(se))
         return jsonify({"error": "Internal server error"}), 500
-
     except Exception as e:
         app.logger.error("Error processing initData: %s", str(e))
         app.logger.error(traceback.format_exc())
@@ -156,7 +143,6 @@ if __name__ == '__main__':
     if not os.path.exists(DATABASE):
         with app.app_context():
             init_db()
-            print("Initialized the database.")
     logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(levelname)s: %(message)s')
     #logging.basicConfig(filename=logfpath, level=logging.INFO)
     app.run(host='127.0.0.1', port=bot_lport, debug=DEBUG)
