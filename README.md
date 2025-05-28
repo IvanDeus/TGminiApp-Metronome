@@ -45,3 +45,21 @@ tar -xzf release-name.tar.gz
 ### Step 2: Create Environment & Install Dependencies
 pip install gunicorn
 pip install Flask
+
+### Step 3: Set Up Your Telegram Bot
+Open Telegram and search for @BotFather
+Run /newbot and follow the instructions
+Save the token provided — this is your BOT_TOKEN
+
+### Step 4: Configure app_cfg.py
+Create or edit app_cfg.py:
+
+### Step 5: Set Up Webhook 
+
+python setup_webhook.py
+
+### Step 6: Run Flask App
+python run-my-app.py start
+
+### Step 7: Expose App Publicly 
+Use Nginx + Let's Encrypt (Recommended for Production)
