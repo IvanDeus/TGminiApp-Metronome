@@ -34,8 +34,8 @@
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 let currentBPM = 90;
 let isPlaying = false;
-let metronomeIntervalId = null; // Variable to store the interval ID
-let userId = null; // Variable to store the user ID
+let metronomeIntervalId = null;
+let userId = null;
 
 function playClick() {
     const now = audioContext.currentTime;
@@ -60,7 +60,7 @@ function startMetronome() {
         clearInterval(metronomeIntervalId);
     }
     const interval = 60000 / currentBPM;
-    playClick(); // Play the first click immediately
+    playClick();
     metronomeIntervalId = setInterval(() => {
         if (isPlaying) playClick();
     }, interval);
@@ -69,7 +69,7 @@ function startMetronome() {
 function stopMetronome() {
     if (metronomeIntervalId) {
         clearInterval(metronomeIntervalId);
-        metronomeIntervalId = null; // Reset the interval ID
+        metronomeIntervalId = null;
     }
 }
 
@@ -80,7 +80,72 @@ function updateBPMDisplay() {
         display.textContent = `BPM: ${paddedBPM}`;
     }
 }
-// Function to send user preferences to the server
+// Function to handle touch/drag on the BPM line
+function setupBPMTouchControl() {
+    const bpmLine = document.getElementById('speed-in-bpm');
+    if (!bpmLine) return;
+
+    let isDragging = false;
+    const minBPM = 24;
+    const maxBPM = 320;
+    // Helper function to calculate BPM based on touch position
+    function calculateBPMFromPosition(clientX) {
+        const rect = bpmLine.getBoundingClientRect();
+        const position = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        return Math.round(minBPM + (maxBPM - minBPM) * position);
+    }
+    // Touch/mouse down event
+    function handleStart(e) {
+        isDragging = true;
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        if (clientX) {
+            const newBPM = calculateBPMFromPosition(clientX);
+            if (newBPM !== currentBPM) {
+                currentBPM = newBPM;
+                updateBPMDisplay();
+                if (isPlaying) {
+                    startMetronome();
+                }
+                sendUserPrefs();
+            }
+        }
+        e.preventDefault();
+    }
+    // Touch/mouse move event
+    function handleMove(e) {
+        if (!isDragging) return;
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        if (clientX) {
+            const newBPM = calculateBPMFromPosition(clientX);
+            if (newBPM !== currentBPM) {
+                currentBPM = newBPM;
+                updateBPMDisplay();
+                if (isPlaying) {
+                    startMetronome();
+                }
+            }
+        }
+        e.preventDefault();
+    }
+    // Touch/mouse up event
+    function handleEnd() {
+        if (isDragging) {
+            isDragging = false;
+            sendUserPrefs(); // Save when dragging ends
+        }
+    }
+    // Add event listeners for both touch and mouse
+    bpmLine.addEventListener('mousedown', handleStart);
+    bpmLine.addEventListener('touchstart', handleStart);
+    
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('touchmove', handleMove);
+    
+    document.addEventListener('mouseup', handleEnd);
+    document.addEventListener('touchend', handleEnd);
+}
+
+// Send user preferences to the server
 function sendUserPrefs() {
     if (userId === null) {
         console.warn("User ID not available. Cannot save preferences.");
@@ -133,6 +198,7 @@ if (window.Telegram && Telegram.WebApp) {
         }
 
         setupButtonHandlers();
+        setupBPMTouchControl();
     })
     .catch(error => {
         console.error('Init failed:', error);
@@ -151,6 +217,7 @@ function setupButtonHandlers() {
                 startMetronome();
             }
             updateBPMDisplay();
+            sendUserPrefs();
         }
     };
     document.getElementById('tempo-down').onclick = () => {
@@ -161,6 +228,7 @@ function setupButtonHandlers() {
                 startMetronome();
             }
             updateBPMDisplay();
+            sendUserPrefs();
         }
     };
 // --- Metronome Play/Stop Button Handler ---
