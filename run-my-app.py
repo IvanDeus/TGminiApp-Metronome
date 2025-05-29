@@ -22,7 +22,7 @@ def init_database():
         finally:
             conn.close()
     else:
-        print("Database already exists.")
+        print("Database exists.")
 
 # --- Process filtering and killing functions ---
 def filter_processes_by_port(bot_lport):
