@@ -11,7 +11,7 @@ LOGFPATH = "/var/log/TGminiApp-Metronome.log"
 # DB name
 DATABASE = 'users_db.sqlite'
 # Local port for webhook
-BOt_LPORT = 6543
+BOT_LPORT = 6543
 
 # Application Settings
 DEBUG = False
