@@ -21,7 +21,7 @@ body {
 }
 
 .credits {
-    text-align: center;
+    text-align: left;
     color: #555;
     font-size: 12px;
     margin-bottom: 10px;
@@ -79,7 +79,7 @@ body {
     background: #222;
     color: #fff;
     border: none;
-    Margin: 15px;
+    Margin: 15px 0px;
     padding: 10px 15px;
     font-size: 18px;
     border-radius: 5px;
