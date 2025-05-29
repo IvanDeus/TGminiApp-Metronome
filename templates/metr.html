@@ -181,8 +181,8 @@ if (playMetrButton) {
     };
 }
 }
-// --- Save preferences on window close ---
-//window.addEventListener('beforeunload', sendUserPrefs);
+// --- Save preferences ---
+setInterval(sendUserPrefs, 23000); // Every 23 seconds
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
         sendUserPrefs();
