@@ -90,7 +90,7 @@
             // Use navigator.sendBeacon for reliable data transmission on page unload
             // or a synchronous XMLHttpRequest if sendBeacon is not supported (less ideal)
             if (navigator.sendBeacon) {
-                navigator.sendBeacon('/update_user_prefs', formData);
+                navigator.sendBeacon('update_user_prefs', formData);
             } else {
                 // Fallback for older browsers: synchronous XHR (can block page unload)
                 const xhr = new XMLHttpRequest();
