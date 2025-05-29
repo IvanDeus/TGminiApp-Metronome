@@ -158,6 +158,55 @@ def update_user_prefs():
         app.logger.error(f"Unexpected error in update_user_prefs for user {user_id}: {str(e)}")
         app.logger.error(traceback.format_exc())
         return jsonify({"error": "Internal server error"}), 500
+
+# Telegram Bot Webhook
+@app.route('/whook', methods=['POST'])
+def telegram_webhook():
+    db = None
+    try:
+        update = request.get_json()
+        if not update:
+            app.logger.warning("No data received in webhook")
+            return jsonify({'status': 'No data'}), 400
+        db = get_db()
+        cur = db.cursor()
+        # Process message or callback query
+        if 'message' in update:
+            msg = update['message']
+            chat_id = msg['from']['id']
+            text = msg.get('text', '')
+            user_id = msg['from']['id']
+            language_code = msg['from'].get('language_code', 'en')
+            # Check if user exists in database
+            cur.execute("SELECT * FROM telegram_users WHERE user_id = ?", (user_id,))
+            user = cur.fetchone()
+            if text == '/start':
+                if user:
+                    welcome_msg = f"Welcome back, {user['first_name']}!"
+                else:
+                    welcome_msg = "Welcome! Please use our web app to get started."
+                tgmessage_user(chat_id, welcome_msg)
+            else:
+                tgmessage_user(chat_id, "Please use our web interface for full functionality.")
+        elif 'callback_query' in update:
+            callback = update['callback_query']
+            chat_id = callback['from']['id']
+            data = callback.get('data', '')
+            tgmessage_user(chat_id, f"Action received: {data}")
+        return '', 204
+    except sqlite3.Error as se:
+        app.logger.error(f"Database error in webhook: {str(se)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'status': 'error', 'message': 'Database error'}), 500
+    except Exception as e:
+        app.logger.error(f"Error in webhook: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        if 'cur' in locals() and cur:
+            cur.close()
+        if db:
+            db.close()
 # Run flask web app      
 if __name__ == '__main__':
     # Only initialize DB if the file doesn't exist
