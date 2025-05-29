@@ -182,7 +182,12 @@ if (playMetrButton) {
 }
 }
 // --- Save preferences on window close ---
-window.addEventListener('beforeunload', sendUserPrefs);
+//window.addEventListener('beforeunload', sendUserPrefs);
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+        sendUserPrefs();
+    }
+});
 // Disable context menu
  document.addEventListener('contextmenu', function (e) {
         e.preventDefault();
