@@ -1,7 +1,7 @@
 import logging
 import traceback
 from flask import Flask, render_template, request, jsonify, g
-from app_cfg import TELEGRAM_BOT_TOKEN, DEBUG, bot_lport, logfpath, DATABASE
+from app_cfg import TELEGRAM_BOT_TOKEN, DEBUG, BOT_LPORT, LOGFPATH, DATABASE
 import hashlib
 import hmac
 import json
@@ -165,5 +165,5 @@ if __name__ == '__main__':
         with app.app_context():
             init_db()
     logging.basicConfig(level=logging.DEBUG,format='%(asctime)s %(levelname)s: %(message)s')
-    #logging.basicConfig(filename=logfpath, level=logging.INFO)
-    app.run(host='127.0.0.1', port=bot_lport, debug=DEBUG)
+    #logging.basicConfig(filename=LOGFPATH, level=logging.INFO)
+    app.run(host='127.0.0.1', port=BOT_LPORT, debug=DEBUG)
