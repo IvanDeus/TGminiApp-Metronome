@@ -1,7 +1,7 @@
 import logging
 import traceback
 from flask import Flask, render_template, request, jsonify, g
-from app_cfg import TELEGRAM_BOT_TOKEN, DEBUG, bot_lport, logfpath
+from app_cfg import TELEGRAM_BOT_TOKEN, DEBUG, bot_lport, logfpath, DATABASE
 import hashlib
 import hmac
 import json
@@ -12,7 +12,6 @@ from urllib.parse import unquote, parse_qs, unquote_plus
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 # Database init
-DATABASE = 'users_db.sqlite'
 def get_db():
     """Opens a new database connection if there is none yet for the current application context."""
     if not hasattr(g, '_sqlite_db'):
