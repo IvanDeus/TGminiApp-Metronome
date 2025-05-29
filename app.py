@@ -1,4 +1,5 @@
 import logging
+import traceback
 from flask import Flask, render_template, request, jsonify, g
 from app_cfg import TELEGRAM_BOT_TOKEN, DEBUG, bot_lport, logfpath
 import hashlib
@@ -137,6 +138,43 @@ def init_telegram():
         app.logger.error("Error processing initData: %s", str(e))
         app.logger.error(traceback.format_exc())
         return jsonify({"error": "Internal server error"}), 500
+
+# handle updates 
+@app.route('/update_user_prefs', methods=['POST'])
+def update_user_prefs():
+    user_id = request.form.get('user_id')
+    bpm = request.form.get('bpm')
+
+    if not user_id or not bpm:
+        app.logger.warning("Missing user_id or bpm in update_user_prefs request.")
+        return jsonify({"error": "Missing user_id or bpm"}), 400
+
+    try:
+        user_id = int(user_id)
+        bpm = int(bpm)
+    except ValueError:
+        app.logger.warning(f"Invalid user_id or bpm format: user_id={user_id}, bpm={bpm}")
+        return jsonify({"error": "Invalid user_id or bpm format"}), 400
+
+    db = get_db()
+    cur = db.cursor()
+    try:
+        cur.execute(
+            "UPDATE telegram_users SET bpm = ? WHERE user_id = ?",
+            (bpm, user_id)
+        )
+        db.commit()
+        #app.logger.info(f"User {user_id} BPM updated to {bpm}.")
+        return jsonify({"success": True}), 200
+    except sqlite3.Error as se:
+        app.logger.error(f"Database error updating user {user_id} prefs: {str(se)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({"error": "Internal server error"}), 500
+    except Exception as e:
+        app.logger.error(f"Unexpected error in update_user_prefs for user {user_id}: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({"error": "Internal server error"}), 500
+
         
 if __name__ == '__main__':
     # Only initialize DB if the file doesn't exist
