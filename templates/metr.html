@@ -63,17 +63,7 @@
 
 // === TELEGRAM INIT FUNCTION ===
 if (window.Telegram && Telegram.WebApp) {
-    initTelegramApp();
-} else {
-    showErrorMessage("This app only works inside Telegram");
-}
-    
-function initTelegramApp() {
     const initData = Telegram.WebApp.initData;
-    if (!initData) {
-        showErrorMessage("No Telegram initData found");
-        return;
-    }
 
     fetch('init_telegram', {
         method: 'POST',
@@ -87,19 +77,18 @@ function initTelegramApp() {
         return response.json();
     })
     .then(data => {
-        // Now it's safe to use DOM elements
         currentBPM = data.bpm || 90;
         const profilePic = document.getElementById('profile-pic');
         if (profilePic) {
             profilePic.style.backgroundImage = `url('${data.photo_url}')`;
         }
 
-        setupButtonHandlers(); // Only now attach click handlers
+        setupButtonHandlers();
         updateBPMDisplay();
     })
     .catch(error => {
-        showErrorMessage(`Init failed: ${error.message}`);
         console.error('Init failed:', error);
+showErrorMessage("This app only works inside Telegram");
     });
 }
 
