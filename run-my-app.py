@@ -64,34 +64,33 @@ if len(sys.argv) == 1:
 action = sys.argv[1]
 
 if action == "start":
-    filtered_processes, pids_tokill = filter_processes_by_port(bot_lport)
+    filtered_processes, pids_tokill = filter_processes_by_port(BOT_LPORT)
     if filtered_processes:
         print("App is already running.")
     else:
         # Initialize DB before starting Gunicorn
         init_database()
-
         # Start Gunicorn
         psutil.Popen(
             ["gunicorn",
-             "-b", "localhost:{}".format(bot_lport),
+             "-b", "localhost:{}".format(BOT_LPORT),
              "-w", "2",
              "-t", "65",
-             "--log-file={}".format(logfpath),
+             "--log-file={}".format(LOGFPATH),
              "app:app",
              "--chdir", script_directory]
         )
         print("App started.")
 
 elif action == "stop":
-    filtered_processes, pids_tokill = filter_processes_by_port(bot_lport)
+    filtered_processes, pids_tokill = filter_processes_by_port(BOT_LPORT)
     if pids_tokill:
         kill_processes(pids_tokill)
     else:
         print("App is stopped.")
 
 elif action == "status":
-    filtered_processes, pids_tokill = filter_processes_by_port(bot_lport)
+    filtered_processes, pids_tokill = filter_processes_by_port(BOT_LPORT)
     if filtered_processes:
         print(filtered_processes)
     else:
