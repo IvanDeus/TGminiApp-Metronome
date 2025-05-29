@@ -158,7 +158,28 @@ def update_user_prefs():
         app.logger.error(f"Unexpected error in update_user_prefs for user {user_id}: {str(e)}")
         app.logger.error(traceback.format_exc())
         return jsonify({"error": "Internal server error"}), 500
-
+# Telegram BOT here
+def tgmessage_user(telegram_id, message):
+    try:
+        bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
+        sent_message = bot.send_message(
+            telegram_id, 
+            message, 
+            parse_mode='HTML',
+            disable_web_page_preview=True
+        )
+        #app.logger.info(f"Message sent to {telegram_id}: {message[:50]}...") 
+        return True
+    except telebot.apihelper.ApiTelegramException as api_error:
+        if api_error.error_code == 403:
+            app.logger.warning(f"User {telegram_id} blocked the bot or can't receive messages")
+        else:
+            app.logger.error(f"Telegram API error sending to {telegram_id}: {str(api_error)}")
+        return False
+    except Exception as e:
+        app.logger.error(f"Error sending Telegram message to {telegram_id}: {str(e)}")
+        app.logger.error(traceback.format_exc())
+        return False
 # Telegram Bot Webhook
 @app.route('/whook', methods=['POST'])
 def telegram_webhook():
