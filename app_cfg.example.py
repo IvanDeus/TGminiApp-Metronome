@@ -7,11 +7,11 @@ WEBHOOK_URL = "https://myapp.com/"
 # Telegram Channel ID (from RawDataBot or similar)
 CHANNEL_ID = "-100YourChannelIDHere"
 # Logging settings
-logfpath = "/var/log/TGminiApp-Metronome.log"
+LOGFPATH = "/var/log/TGminiApp-Metronome.log"
 # DB name
 DATABASE = 'users_db.sqlite'
 # Local port for webhook
-bot_lport = 6543
+BOt_LPORT = 6543
 
 # Application Settings
 DEBUG = False
