@@ -75,6 +75,17 @@ body {
     flex: 1;
 }
 
+.control-start {
+    background: #222;
+    color: #fff;
+    border: none;
+    Margin: 15px;
+    padding: 10px 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+}
 .telegram-error {
     color: red;
     font-weight: bold;
