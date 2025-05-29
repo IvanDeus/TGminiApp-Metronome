@@ -34,6 +34,7 @@
     let currentBPM = 90;
     let isPlaying = false;
     let metronomeIntervalId = null; // Variable to store the interval ID
+    let userId = null; // Variable to store the user ID
 
     function playClick() {
         const now = audioContext.currentTime;
@@ -79,6 +80,27 @@
         }
     }
 
+    // Function to send user preferences to the server
+    function sendUserPrefs() {
+        if (userId !== null) { // Only send if userId is available
+            const formData = new URLSearchParams();
+            formData.append('user_id', userId);
+            formData.append('bpm', currentBPM);
+
+            // Use navigator.sendBeacon for reliable data transmission on page unload
+            // or a synchronous XMLHttpRequest if sendBeacon is not supported (less ideal)
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon('/update_user_prefs', formData);
+            } else {
+                // Fallback for older browsers: synchronous XHR (can block page unload)
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/update_user_prefs', false); // 'false' makes it synchronous
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.send(formData);
+            }
+        }
+    }
+
 // --- TELEGRAM INIT FUNCTION ---
 if (window.Telegram && Telegram.WebApp) {
     const initData = Telegram.WebApp.initData;
@@ -96,6 +118,7 @@ if (window.Telegram && Telegram.WebApp) {
     })
     .then(data => {
         currentBPM = data.bpm || 90;
+        userId = data.user_id; // Store the user_id from the initial data
         updateBPMDisplay();
 
         const profilePic = document.getElementById('profile-pic');
@@ -105,7 +128,7 @@ if (window.Telegram && Telegram.WebApp) {
 
         const profileNameElement = document.getElementById("profile-name");
         if (profileNameElement) {
-            profileNameElement.innerText = `[ ${data.first_name} ]`;
+           profileNameElement.innerText = `[ ${data.first_name} ]`;
         }
 
         setupButtonHandlers();
@@ -114,42 +137,6 @@ if (window.Telegram && Telegram.WebApp) {
         console.error('Init failed:', error);
         showErrorMessage("This app only works inside Telegram");
     });
-
-    // --- Send BPM on Telegram Web App close ---
-    Telegram.WebApp.onEvent('mainButtonClicked', function() {
-        // This event is triggered when the main button is clicked
-        // You might use this if you have a custom "Save" or "Close" button within the Telegram app
-        // However, for general app closing, the 'onunload' event is more suitable.
-        // For now, let's focus on the window.onunload event.
-    });
-
-    // Event listener for when the window is about to be unloaded (closed or navigated away)
-    window.addEventListener('beforeunload', function() {
-        // Stop the metronome if it's playing to avoid lingering audio
-        if (isPlaying) {
-            stopMetronome();
-        }
-
-        // Send the current BPM back to the server
-        // Using fetch with keepalive is generally more reliable than beacon for complex data/headers
-        fetch('init_telegram', { // Assuming 'init_telegram' is also your endpoint for saving data
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: `initData=${encodeURIComponent(initData)}&bpm=${currentBPM}`,
-            keepalive: true // Crucial for sending data during page unload
-        })
-        .then(response => {
-            if (!response.ok) {
-                console.error('Failed to save BPM on close:', response.statusText);
-            }
-        })
-        .catch(error => {
-            console.error('Error saving BPM on close:', error);
-        });
-    });
-
 }
 
 function setupButtonHandlers() {
@@ -197,6 +184,9 @@ function setupButtonHandlers() {
 function showErrorMessage(message) {
     document.body.innerHTML = `<div class="telegram-error">${message}</div>`;
 }
+
+// --- Save preferences on window close ---
+window.addEventListener('beforeunload', sendUserPrefs);
 
 // Disable context menu
  document.addEventListener('contextmenu', function (e) {
