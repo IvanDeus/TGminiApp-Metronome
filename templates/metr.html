@@ -81,37 +81,35 @@ function updateBPMDisplay() {
     }
 }
 // Function to handle touch/drag on the BPM line
+// Update the BPM level indicator position
+function updateBPMLevelIndicator() {
+    const bpmLevel = document.querySelector('.bpm-level');
+    if (bpmLevel) {
+        const percentage = ((currentBPM - 24) / (320 - 24)) * 100;
+        bpmLevel.style.width = `${percentage}%`;
+    }
+}
+// Update the setupBPMTouchControl function:
 function setupBPMTouchControl() {
-    const bpmLine = document.getElementById('speed-in-bpm');
-    if (!bpmLine) return;
+    const bpmControl = document.querySelector('.bpm-control');
+    if (!bpmControl) return;
 
     let isDragging = false;
     const minBPM = 24;
     const maxBPM = 320;
-    // Helper function to calculate BPM based on touch position
+
     function calculateBPMFromPosition(clientX) {
-        const rect = bpmLine.getBoundingClientRect();
+        const rect = bpmControl.getBoundingClientRect();
         const position = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
         return Math.round(minBPM + (maxBPM - minBPM) * position);
     }
-    // Touch/mouse down event
+
     function handleStart(e) {
         isDragging = true;
-        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-        if (clientX) {
-            const newBPM = calculateBPMFromPosition(clientX);
-            if (newBPM !== currentBPM) {
-                currentBPM = newBPM;
-                updateBPMDisplay();
-                if (isPlaying) {
-                    startMetronome();
-                }
-                sendUserPrefs();
-            }
-        }
+        handleMove(e); // Update position immediately on start
         e.preventDefault();
     }
-    // Touch/mouse move event
+
     function handleMove(e) {
         if (!isDragging) return;
         const clientX = e.clientX || (e.touches && e.touches[0].clientX);
@@ -120,6 +118,7 @@ function setupBPMTouchControl() {
             if (newBPM !== currentBPM) {
                 currentBPM = newBPM;
                 updateBPMDisplay();
+                updateBPMLevelIndicator(); // Update visual position
                 if (isPlaying) {
                     startMetronome();
                 }
@@ -127,20 +126,18 @@ function setupBPMTouchControl() {
         }
         e.preventDefault();
     }
-    // Touch/mouse up event
+
     function handleEnd() {
         if (isDragging) {
             isDragging = false;
-            sendUserPrefs(); // Save when dragging ends
+            sendUserPrefs();
         }
     }
-    // Add event listeners for both touch and mouse
-    bpmLine.addEventListener('mousedown', handleStart);
-    bpmLine.addEventListener('touchstart', handleStart);
-    
+
+    bpmControl.addEventListener('mousedown', handleStart);
+    bpmControl.addEventListener('touchstart', handleStart);
     document.addEventListener('mousemove', handleMove);
     document.addEventListener('touchmove', handleMove);
-    
     document.addEventListener('mouseup', handleEnd);
     document.addEventListener('touchend', handleEnd);
 }
@@ -184,9 +181,9 @@ if (window.Telegram && Telegram.WebApp) {
     })
     .then(data => {
         currentBPM = data.bpm || 90;
-        userId = data.user_id; // Store the user_id from the initial data
+        userId = data.user_id;
         updateBPMDisplay();
-
+        updateBPMLevelIndicator();
         const profilePic = document.getElementById('profile-pic');
         if (profilePic) {
             profilePic.style.backgroundImage = `url('${data.photo_url}')`;
