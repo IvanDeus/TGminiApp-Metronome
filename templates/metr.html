@@ -105,7 +105,7 @@ if (window.Telegram && Telegram.WebApp) {
 
         const profileNameElement = document.getElementById("profile-name");
         if (profileNameElement) {
-       profileNameElement.innerText = `[ ${data.first_name}] `;
+            profileNameElement.innerText = `[ ${data.first_name} ]`;
         }
 
         setupButtonHandlers();
@@ -114,6 +114,42 @@ if (window.Telegram && Telegram.WebApp) {
         console.error('Init failed:', error);
         showErrorMessage("This app only works inside Telegram");
     });
+
+    // --- Send BPM on Telegram Web App close ---
+    Telegram.WebApp.onEvent('mainButtonClicked', function() {
+        // This event is triggered when the main button is clicked
+        // You might use this if you have a custom "Save" or "Close" button within the Telegram app
+        // However, for general app closing, the 'onunload' event is more suitable.
+        // For now, let's focus on the window.onunload event.
+    });
+
+    // Event listener for when the window is about to be unloaded (closed or navigated away)
+    window.addEventListener('beforeunload', function() {
+        // Stop the metronome if it's playing to avoid lingering audio
+        if (isPlaying) {
+            stopMetronome();
+        }
+
+        // Send the current BPM back to the server
+        // Using fetch with keepalive is generally more reliable than beacon for complex data/headers
+        fetch('init_telegram', { // Assuming 'init_telegram' is also your endpoint for saving data
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `initData=${encodeURIComponent(initData)}&bpm=${currentBPM}`,
+            keepalive: true // Crucial for sending data during page unload
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.error('Failed to save BPM on close:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('Error saving BPM on close:', error);
+        });
+    });
+
 }
 
 function setupButtonHandlers() {
