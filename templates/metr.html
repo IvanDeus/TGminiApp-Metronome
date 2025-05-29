@@ -105,7 +105,7 @@ if (window.Telegram && Telegram.WebApp) {
 
         const profileNameElement = document.getElementById("profile-name");
         if (profileNameElement) {
-            profileNameElement.innerText = data.first_name;
+       profileNameElement.innerText = `[ ${data.first_name}] `;
         }
 
         setupButtonHandlers();
