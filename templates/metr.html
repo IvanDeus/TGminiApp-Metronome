@@ -146,21 +146,12 @@ function setupButtonHandlers() {
         if (currentBPM < 320) {
             currentBPM += 4;
             updateBPMDisplay();
-            // If playing, restart the metronome with the new BPM
-            if (isPlaying) {
-                startMetronome();
-            }
         }
     };
-
     document.getElementById('tempo-down').onclick = () => {
         if (currentBPM > 24) {
             currentBPM -= 4;
             updateBPMDisplay();
-            // If playing, restart the metronome with the new BPM
-            if (isPlaying) {
-                startMetronome();
-            }
         }
     };
 // --- Metronome Play/Stop Button Handler ---
@@ -173,8 +164,9 @@ if (playMetrButton) {
             playMetrButton.textContent = 'Start Metronome';
             isPlaying = false;
         } else {
-            // Not playing, so start the metronome
+            // Not playing, so start the metronome and save user prefs
             isPlaying = true;
+            sendUserPrefs();
             startMetronome();
             playMetrButton.textContent = 'Stop Metronome';
         }
@@ -182,7 +174,7 @@ if (playMetrButton) {
 }
 }
 // --- Save preferences ---
-setInterval(sendUserPrefs, 23000); // Every 23 seconds
+setInterval(sendUserPrefs, 53000); // Every 53 seconds
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
         sendUserPrefs();
