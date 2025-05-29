@@ -7,6 +7,7 @@ import hmac
 import json
 import sqlite3
 import os
+import telebot
 from urllib.parse import unquote, parse_qs, unquote_plus
 # Initialize Flask app
 app = Flask(__name__)
