@@ -17,7 +17,7 @@
 </div>
 
 <div class="controls">
-<button class="control-btn" id="playmetr">Start Metronome</button>
+<button class="control-start" id="playmetr">Start Metronome</button>
 </div>
 
 <div class="controls">
@@ -33,6 +33,7 @@
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     let currentBPM = 90;
     let isPlaying = false;
+    let metronomeIntervalId = null; // Variable to store the interval ID
 
     function playClick() {
         const now = audioContext.currentTime;
@@ -52,11 +53,22 @@
     }
 
     function startMetronome() {
+        // Clear any existing interval to prevent multiple metronomes playing
+        if (metronomeIntervalId) {
+            clearInterval(metronomeIntervalId);
+        }
         const interval = 60000 / currentBPM;
-        playClick();
-        setInterval(() => {
+        playClick(); // Play the first click immediately
+        metronomeIntervalId = setInterval(() => {
             if (isPlaying) playClick();
         }, interval);
+    }
+
+    function stopMetronome() {
+        if (metronomeIntervalId) {
+            clearInterval(metronomeIntervalId);
+            metronomeIntervalId = null; // Reset the interval ID
+        }
     }
 
     function updateBPMDisplay() {
@@ -67,7 +79,7 @@
         }
     }
 
-// === TELEGRAM INIT FUNCTION ===
+// --- TELEGRAM INIT FUNCTION ---
 if (window.Telegram && Telegram.WebApp) {
     const initData = Telegram.WebApp.initData;
 
@@ -83,24 +95,24 @@ if (window.Telegram && Telegram.WebApp) {
         return response.json();
     })
     .then(data => {
-currentBPM = data.bpm || 90;
-updateBPMDisplay();
+        currentBPM = data.bpm || 90;
+        updateBPMDisplay();
 
-const profilePic = document.getElementById('profile-pic');
-if (profilePic) {
-profilePic.style.backgroundImage = `url('${data.photo_url}')`;
+        const profilePic = document.getElementById('profile-pic');
+        if (profilePic) {
+            profilePic.style.backgroundImage = `url('${data.photo_url}')`;
         }
 
-const profileNameElement = document.getElementById("profile-name");
-if (profileNameElement) {
-  profileNameElement.innerText = data.first_name;
-}
+        const profileNameElement = document.getElementById("profile-name");
+        if (profileNameElement) {
+            profileNameElement.innerText = data.first_name;
+        }
 
-setupButtonHandlers();
+        setupButtonHandlers();
     })
     .catch(error => {
         console.error('Init failed:', error);
-showErrorMessage("This app only works inside Telegram");
+        showErrorMessage("This app only works inside Telegram");
     });
 }
 
@@ -109,6 +121,10 @@ function setupButtonHandlers() {
         if (currentBPM < 320) {
             currentBPM += 4;
             updateBPMDisplay();
+            // If playing, restart the metronome with the new BPM
+            if (isPlaying) {
+                startMetronome();
+            }
         }
     };
 
@@ -116,14 +132,37 @@ function setupButtonHandlers() {
         if (currentBPM > 24) {
             currentBPM -= 4;
             updateBPMDisplay();
+            // If playing, restart the metronome with the new BPM
+            if (isPlaying) {
+                startMetronome();
+            }
         }
     };
+
+    // --- Metronome Play/Stop Button Handler ---
+    const playMetrButton = document.getElementById('playmetr');
+    if (playMetrButton) {
+        playMetrButton.onclick = () => {
+            if (isPlaying) {
+                // Currently playing, so stop the metronome
+                stopMetronome();
+                playMetrButton.textContent = 'Start Metronome';
+                isPlaying = false;
+            } else {
+                // Not playing, so start the metronome
+                isPlaying = true;
+                startMetronome();
+                playMetrButton.textContent = 'Stop Metronome';
+            }
+        };
+    }
 }
 
 function showErrorMessage(message) {
     document.body.innerHTML = `<div class="telegram-error">${message}</div>`;
 }
-    // Disable context menu
+
+// Disable context menu
  document.addEventListener('contextmenu', function (e) {
         e.preventDefault();
     }, false);
