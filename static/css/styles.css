@@ -44,17 +44,34 @@ body {
 
 .volume-control {
     height: 24px;
-    background: #ccc;
-    border-radius: 10px;
+    background: #e0e0e0;
+    border-radius: 12px;
     overflow: hidden;
     margin: 15px 0;
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .volume-level {
     height: 100%;
-    width: 0%;
-    background: #4caf50;
-    transition: width 0.2s ease;
+    width: 30%;
+    background: linear-gradient(to right, #4CAF50, #8BC34A);
+    transition: width 0.1s ease;
+    position: relative;
+}
+
+.volume-level::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .controls {
@@ -73,21 +90,36 @@ body {
     border-radius: 5px;
     cursor: pointer;
     flex: 1;
+    transition: background 0.2s;
+}
+
+.control-btn:active {
+    background: #555;
 }
 
 .control-start {
     background: #222;
     color: #fff;
     border: none;
-    Margin: 15px 0px;
+    margin: 15px 0px;
     padding: 10px 15px;
     font-size: 18px;
     border-radius: 5px;
     cursor: pointer;
     flex: 1;
+    transition: background 0.2s;
 }
+
+.control-start:active {
+    background: #444;
+}
+
 .telegram-error {
     color: red;
     font-weight: bold;
-background: #444;
+    background: #444;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px;
+    text-align: center;
 }
