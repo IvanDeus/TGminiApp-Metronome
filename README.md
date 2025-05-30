@@ -46,6 +46,8 @@ Download release file and unpack:
 
 ### Step 2: Create Environment & Install Dependencies
 
+Depending on your OS, install Python 3 main package and then run those:
+
 `pip install gunicorn`
 
 `pip install Flask`
