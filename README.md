@@ -44,19 +44,25 @@ Download release file and unpack:
 `tar -xzf release-name.tar.gz`
 
 ### Step 2: Create Environment & Install Dependencies
+
 `pip install gunicorn`
 `pip install Flask`
 `pip install telebot`
 
 ### Step 3: Set Up Your Telegram Bot
+
 3.1. Open Telegram and search for @BotFather
+
 3.2. Run /newbot and follow the instructions
-3.3. Save the token provided — this is your BOT_TOKEN
+
+3.3. Save the token provided — this is your TELEGRAM_BOT_TOKEN
 
 ### Step 4: Configure app_cfg.py
 Copy app_cfg.example.py to app_cfg.py:
+
 `cp app_cfg.example.py app_cfg.py`
-And add your actual data, like: TELEGRAM_BOT_TOKEN, WEBHOOK_URL, log file and local port for webhook
+
+And add your actual data, like: TELEGRAM_BOT_TOKEN, Webhook URL, log file and local port for webhook
 
 ### Step 5: Set Up Webhook 
 
