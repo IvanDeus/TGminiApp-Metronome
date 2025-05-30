@@ -56,7 +56,7 @@ pip install telebot
 
 pip install psutil
 ```
-### Step 3: Set Up Your Telegram Bot
+### Step 3: Set Up Your Telegram Bot 🤖
 
 3.1. Open Telegram and search for @BotFather
 
