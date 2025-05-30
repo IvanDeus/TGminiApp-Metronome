@@ -12,7 +12,7 @@ A simple metronome mini app that runs inside **Telegram WebApp** environment usi
 - Runs in Telegram via WebApp
 - Fetches Telegram user info
 - Saves/loads BPM settings from SQLite
-- Audio click metronome with adjustable tempo
+- Audio click metronome with easily adjustable tempo
 - Works securely over HTTPS
 
 ---
@@ -30,9 +30,8 @@ A simple metronome mini app that runs inside **Telegram WebApp** environment usi
 
 ### ⚙️ Server Setup (for production)
 
-- Linux (Ubuntu/Redhat) server
+- Linux (Ubuntu/RedHat or similar) server
 - Nginx
-- Certbot (Let’s Encrypt SSL)
 - Domain name with DNS configured
 
 ---
@@ -61,7 +60,8 @@ Download release file and unpack:
 
 3.3. Save the token provided — this is your TELEGRAM_BOT_TOKEN
 
-### Step 4: Configure app_cfg.py
+### Step 4: Configure App
+
 Copy app_cfg.example.py to app_cfg.py:
 
 `cp app_cfg.example.py app_cfg.py`
@@ -70,11 +70,18 @@ And add your actual data, like: TELEGRAM_BOT_TOKEN, Webhook URL, log file and lo
 
 ### Step 5: Set Up Webhook 
 
+This will connect your Telegram bot to your APP:
+
 `python setup_webhook.py`
 
 ### Step 6: Run Flask App
 
+To start the App in the background run: 
+
 `python run-my-app.py start`
 
+This step will also initialize the SQLite database
+
 ### Step 7: Expose App Publicly 
+
 Use Nginx + Let's Encrypt (Recommended for Production)
