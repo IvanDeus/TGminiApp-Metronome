@@ -90,8 +90,7 @@ This step will also initialize the SQLite database
 
 Use Nginx (Recommended for Production) to configure proxying public URL to a local App port:
 
-
-```bash
+```
 server {
     listen 443;
     server_name yourdomain.com;
@@ -106,10 +105,9 @@ server {
         root /var/www/html;
     }
 }
-
 ```
 
-You can get SSL Certificate from Certbot/acme.sh "Let's Encrypt" or any other provider
+You can get SSL Certificate from Certbot/acme.sh "Let's Encrypt" or any other provider.
 
 ### Step 8: Enjoy!
 
