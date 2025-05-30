@@ -70,7 +70,7 @@ And add your actual data, like: TELEGRAM_BOT_TOKEN, Webhook URL, log file and lo
 
 ### Step 5: Set Up Webhook 
 
-This will connect your Telegram bot to your APP:
+This will connect your Telegram bot to your App:
 
 `python setup_webhook.py`
 
@@ -84,4 +84,6 @@ This step will also initialize the SQLite database
 
 ### Step 7: Expose App Publicly 
 
-Use Nginx + Let's Encrypt (Recommended for Production)
+Use Nginx (Recommended for Production) + SSL Certificate from Certbot/acme.sh "Let's Encrypt" or any other provider.
+
+
