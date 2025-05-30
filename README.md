@@ -62,17 +62,19 @@ Depending on your OS, install Python 3 main package and then run those:
 
 3.3. Save the token provided — this is your TELEGRAM_BOT_TOKEN
 
+3.4. Go to Bot settings - Configure Mini App - Add Mini App URL (Webhook URL)
+
 ### Step 4: Configure App
 
 Copy app_cfg.example.py to app_cfg.py:
 
 `cp app_cfg.example.py app_cfg.py`
 
-And add your actual data, like: TELEGRAM_BOT_TOKEN, Webhook URL, log file and local port for webhook
+Edit app_cfg.py and add your actual data, like: TELEGRAM_BOT_TOKEN, Webhook URL, log file and local port for webhook
 
 ### Step 5: Set Up Webhook 
 
-This will connect your Telegram bot to your App:
+Run this to connect your Telegram bot to your App:
 
 `python setup_webhook.py`
 
@@ -86,6 +88,29 @@ This step will also initialize the SQLite database
 
 ### Step 7: Expose App Publicly 
 
-Use Nginx (Recommended for Production) + SSL Certificate from Certbot/acme.sh "Let's Encrypt" or any other provider.
+Use Nginx (Recommended for Production) to configure proxying public URL to a local App port:
 
 
+```bash
+server {
+    listen 443;
+    server_name yourdomain.com;
+
+    location / {
+        proxy_pass http://localhost:6543;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+}
+
+```
+
+You can get SSL Certificate from Certbot/acme.sh "Let's Encrypt" or any other provider
+
+### Step 8: Enjoy!
+
+Go to your Telegram bot and run the App!
