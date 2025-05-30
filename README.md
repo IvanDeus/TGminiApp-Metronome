@@ -53,6 +53,8 @@ pip install gunicorn
 pip install flask
 
 pip install telebot
+
+pip install psutil
 ```
 ### Step 3: Set Up Your Telegram Bot
 
