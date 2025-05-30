@@ -47,13 +47,13 @@ Download release file and unpack:
 ### Step 2: Create Environment & Install Dependencies
 
 Depending on your OS, install Python 3 main package and then run those:
+```
+pip install gunicorn
 
-`pip install gunicorn`
+pip install flask
 
-`pip install Flask`
-
-`pip install telebot`
-
+pip install telebot
+```
 ### Step 3: Set Up Your Telegram Bot
 
 3.1. Open Telegram and search for @BotFather
@@ -92,17 +92,15 @@ Use Nginx (Recommended for Production) to configure proxying public URL to a loc
 
 ```
 server {
-    listen 443;
+    listen 443 ssl;
     server_name yourdomain.com;
+    ssl_certificate /home/user/chain.cer;
+    ssl_certificate_key /home/user/cert.key;
 
     location / {
         proxy_pass http://localhost:6543;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-
-    location /.well-known/acme-challenge/ {
-        root /var/www/html;
     }
 }
 ```
