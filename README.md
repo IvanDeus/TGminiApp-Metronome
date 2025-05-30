@@ -39,14 +39,18 @@ A simple metronome mini app that runs inside **Telegram WebApp** environment usi
 
 ## 🛠️ Installation Instructions
 
-### Step 1: Clone the repo
+### Step 1: Get the App
+
 Download release file and unpack:
+
 `tar -xzf release-name.tar.gz`
 
 ### Step 2: Create Environment & Install Dependencies
 
 `pip install gunicorn`
+
 `pip install Flask`
+
 `pip install telebot`
 
 ### Step 3: Set Up Your Telegram Bot
