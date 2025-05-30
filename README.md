@@ -88,7 +88,7 @@ This step will also initialize the SQLite database
 
 ### Step 7: Expose App Publicly
 
-Use Nginx (Recommended for Production) to configure proxying public URL to a local App port, similar to this:
+Use Nginx (Recommended for Production) for proxying public URL to a local App port, similar to this:
 
 ```
 server {
