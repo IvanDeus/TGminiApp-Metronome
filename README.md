@@ -80,13 +80,13 @@ Run this to connect your Telegram bot to your App:
 
 `python setup_webhook.py`
 
-### Step 6: Run Flask App
+### Step 6: Run Metronome Mini App
 
 To start the App in the background run: 
 
 `python run-my-app.py start`
 
-This step will also initialize the SQLite database
+This step will also initialize the SQLite database.
 
 ### Step 7: Expose App Publicly
 
