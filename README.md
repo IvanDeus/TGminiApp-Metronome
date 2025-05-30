@@ -109,6 +109,6 @@ server {
 
 You can get SSL Certificate from Certbot/acme.sh "Let's Encrypt" or any other provider.
 
-### 🎉 Step 8: Enjoy!
+### Step 8: 🎉Enjoy!
 
 Go to your Telegram bot and run the App!
