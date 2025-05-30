@@ -70,7 +70,7 @@ Copy app_cfg.example.py to app_cfg.py:
 
 `cp app_cfg.example.py app_cfg.py`
 
-Edit app_cfg.py and add your actual data, like: TELEGRAM_BOT_TOKEN, Webhook URL, log file and local port for webhook
+Edit app_cfg.py and add your actual data, like: TELEGRAM_BOT_TOKEN, Webhook URL, log file and local port for a webhook.
 
 ### Step 5: Set Up Webhook 
 
@@ -86,9 +86,9 @@ To start the App in the background run:
 
 This step will also initialize the SQLite database
 
-### Step 7: Expose App Publicly 
+### Step 7: Expose App Publicly
 
-Use Nginx (Recommended for Production) to configure proxying public URL to a local App port:
+Use Nginx (Recommended for Production) to configure proxying public URL to a local App port, similar to this:
 
 ```
 server {
