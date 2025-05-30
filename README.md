@@ -80,7 +80,7 @@ Run this to connect your Telegram bot to your App:
 
 `python setup_webhook.py`
 
-### Step 6: Run Your Metronome Mini App
+### Step 6: 🏃🏻‍♂️Run Your Metronome Mini App
 
 To start the App in the background run: 
 
