@@ -25,6 +25,7 @@ A simple metronome mini app that runs inside **Telegram WebApp** environment usi
 - gunicorn
 - Flask
 - SQLite
+- telebot
 - Telegram account with bot created via BotFather
 
 ### ⚙️ Server Setup (for production)
@@ -45,20 +46,22 @@ tar -xzf release-name.tar.gz
 ### Step 2: Create Environment & Install Dependencies
 pip install gunicorn
 pip install Flask
+pip install telebot
 
 ### Step 3: Set Up Your Telegram Bot
-Open Telegram and search for @BotFather
-Run /newbot and follow the instructions
-Save the token provided — this is your BOT_TOKEN
+3.1 Open Telegram and search for @BotFather
+3.2 Run /newbot and follow the instructions
+3.3 Save the token provided — this is your BOT_TOKEN
 
 ### Step 4: Configure app_cfg.py
-Create or edit app_cfg.py:
+Copy app_cfg.example.py to app_cfg.py and add your actual data: TELEGRAM_BOT_TOKEN, WEBHOOK_URL, log file and local port for webhook
 
 ### Step 5: Set Up Webhook 
 
 python setup_webhook.py
 
 ### Step 6: Run Flask App
+
 python run-my-app.py start
 
 ### Step 7: Expose App Publicly 
