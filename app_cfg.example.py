@@ -4,8 +4,6 @@
 TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'
 # Webhook URL (must be public, e.g., ngrok or real server)
 WEBHOOK_URL = "https://myapp.com/"
-# Telegram Channel ID (from RawDataBot or similar)
-CHANNEL_ID = "-100YourChannelIDHere"
 # Logging settings
 LOGFPATH = "/var/log/TGminiApp-Metronome.log"
 # DB name
