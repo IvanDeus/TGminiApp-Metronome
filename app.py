@@ -54,10 +54,7 @@ def verify_telegram_data(data):
 # Main web page
 @app.route('/')
 def index():
-    return render_template(
-        'metr.html',
-        photo_url=request.args.get('photo_url', '')
-    )
+    return render_template('load.html')
 # Get initial user data from app
 @app.route('/init_telegram', methods=['POST'])
 def init_telegram():
