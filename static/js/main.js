@@ -181,6 +181,13 @@ if (window.Telegram && Telegram.WebApp) {
 
         setupButtonHandlers();
         setupBPMTouchControl();
+        // --- Save preferences ---
+        setInterval(sendUserPrefs, 53000); // Every 53 seconds
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                sendUserPrefs();
+            }
+        });
     })
     .catch(error => {
         console.error('Init failed:', error);
@@ -232,13 +239,6 @@ if (playMetrButton) {
     };
 }
 }
-// --- Save preferences ---
-setInterval(sendUserPrefs, 53000); // Every 53 seconds
-document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') {
-        sendUserPrefs();
-    }
-});
 // Disable context menu
  document.addEventListener('contextmenu', function (e) {
         e.preventDefault();
