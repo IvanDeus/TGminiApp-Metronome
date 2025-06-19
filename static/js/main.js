@@ -132,6 +132,22 @@ function sendUserPrefs() {
         xhr.send(formData);
     }
 }
+// --- Load metr.html via AJAX ---
+function loadMetronomeHTML(callback) {
+    fetch('static/html/metr.html')
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to load metr.html");
+            return response.text();
+        })
+        .then(html => {
+            document.body.innerHTML = html;
+            if (callback) callback();
+        })
+        .catch(err => {
+            console.error("Error loading metr.html:", err);
+            showErrorMessage("Failed to load app interface.");
+        });
+}
 // --- TELEGRAM INIT FUNCTION ---
 if (window.Telegram && Telegram.WebApp) {
     const initData = Telegram.WebApp.initData;
@@ -148,6 +164,7 @@ if (window.Telegram && Telegram.WebApp) {
         return response.json();
     })
     .then(data => {
+        loadMetronomeHTML();
         currentBPM = data.bpm || 90;
         userId = data.user_id;
         updateBPMDisplay();
