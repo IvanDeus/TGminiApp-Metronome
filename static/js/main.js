@@ -164,7 +164,7 @@ if (window.Telegram && Telegram.WebApp) {
         return response.json();
     })
     .then(data => {
-        loadMetronomeHTML();
+        loadMetronomeHTML(() => {  
         currentBPM = data.bpm || 90;
         userId = data.user_id;
         updateBPMDisplay();
@@ -188,6 +188,7 @@ if (window.Telegram && Telegram.WebApp) {
                 sendUserPrefs();
             }
         });
+     });
     })
     .catch(error => {
         console.error('Init failed:', error);
