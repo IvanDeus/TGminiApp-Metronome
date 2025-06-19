@@ -22,5 +22,27 @@
 </head>
 <body>
     <div id="loader">Loading...</div>
+    
+    <script>
+        // Function to load a script dynamically
+        function loadScript(src, callback, isModule = false) {
+            const script = document.createElement('script');
+            script.src = src;
+            if (isModule) script.type = 'module';
+            script.onload = () => {
+                if (callback) callback();
+            };
+            script.onerror = () => {
+                console.error("Failed to load script:", src);
+                document.getElementById('loader').innerText = "Failed to load resources.";
+            };
+            document.head.appendChild(script);
+        }
+        // Load Telegram SDK first
+        loadScript("https://telegram.org/js/telegram-web-app.js",  () => {
+            // Now load main.js as module
+            loadScript("/static/js/main.js", null, true);
+        });
+    </script>
 </body>
 </html>
