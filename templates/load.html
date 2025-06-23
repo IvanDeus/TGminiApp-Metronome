@@ -13,7 +13,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #080808;
+      background-color: #141414;
       color: white;
       display: flex;
       justify-content: center;
@@ -42,16 +42,14 @@
       };
       document.head.appendChild(script);
     }
-    // Show loader and hide after minimum 2 seconds
     window.addEventListener('load', () => {
       const loader = document.getElementById('loader');
-      // Ensure loader stays visible for at least 2 seconds
       setTimeout(() => {
-        if (loader) {
-          loader.style.transition = 'opacity 0.5s ease-out';
-          loader.style.opacity = '0';
-          loader.style.pointerEvents = 'none';
-        }
+        loader.style.transition = 'opacity 0.5s ease-out';
+        loader.style.opacity = '0';
+        setTimeout(() => {
+          loader.remove();
+        }, 500);
       }, 2000);
     });
     // Load Telegram SDK first
