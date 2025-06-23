@@ -76,6 +76,7 @@ if action == "start":
              "-b", "localhost:{}".format(BOT_LPORT),
              "-w", "2",
              "-t", "65",
+             "--preload",
              "--log-file={}".format(LOGFPATH),
              "app:app",
              "--chdir", script_directory]
