@@ -140,7 +140,8 @@ function loadMetronomeHTML(callback) {
             return response.text();
         })
         .then(html => {
-            document.body.innerHTML = html;
+            const appContainer = document.getElementById('app');
+            if (appContainer) {appContainer.innerHTML = html;}
             if (callback) callback();
         })
         .catch(err => {
