@@ -3,6 +3,14 @@ import { startMetronome, stopMetronome } from './audio.js';
 export let currentBPM = 90;
 export let isPlaying  = false;
 let userId = null;
+// show padded BPM
+function updateBPMDisplay() {
+    const display = document.getElementById('bpm-display');
+    if (display) {
+        const paddedBPM = currentBPM.toString().padStart(3, '0');
+        display.textContent = `BPM: ${paddedBPM}`;
+    }
+}
 // Update the setupBPMTouchControl function:
 function setupBPMTouchControl() {
     const bpmControl = document.querySelector('.bpm-control');
@@ -77,14 +85,6 @@ function setupButtonHandlers() {
             sendUserPrefs();
         }
     };
-
-function updateBPMDisplay() {
-    const display = document.getElementById('bpm-display');
-    if (display) {
-        const paddedBPM = currentBPM.toString().padStart(3, '0');
-        display.textContent = `BPM: ${paddedBPM}`;
-    }
-}
 // Function to handle touch/drag on the BPM line
 // Update the BPM level indicator position
 function updateBPMLevelIndicator() {
