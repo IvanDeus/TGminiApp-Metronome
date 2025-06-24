@@ -1,5 +1,5 @@
 // main.js
-import { startMetronome, stopMetronome } from './practice.js';
+import { startMetronome, stopMetronome } from './audio.js';
 export let currentBPM = 90;
 export let isPlaying  = false;
 let userId = null;
