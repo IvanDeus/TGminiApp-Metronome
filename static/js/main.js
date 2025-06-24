@@ -100,29 +100,6 @@ if (window.Telegram && Telegram.WebApp) {
 function showErrorMessage(message) {
     document.body.innerHTML = `<div class="telegram-error">${message}</div>`;
 }
-function setupButtonHandlers() {
-    document.getElementById('tempo-up').onclick = () => {
-        if (currentBPM < 320) {
-            currentBPM += 4;
-            // If playing, restart the metronome with the new BPM
-            if (isPlaying) {
-                startMetronome();
-            }
-            updateBPMDisplay();
-            sendUserPrefs();
-        }
-    };
-    document.getElementById('tempo-down').onclick = () => {
-        if (currentBPM > 24) {
-            currentBPM -= 4;
-            // If playing, restart the metronome with the new BPM
-            if (isPlaying) {
-                startMetronome();
-            }
-            updateBPMDisplay();
-            sendUserPrefs();
-        }
-    };
 // --- Metronome Play/Stop Button Handler ---
 const playMetrButton = document.getElementById('playmetr');
 if (playMetrButton) {
