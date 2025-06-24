@@ -19,24 +19,6 @@ function updateBPMLevelIndicator() {
         bpmLevel.style.width = `${percentage}%`;
     }
 }
-// --- Metronome Play/Stop Button Handler ---
-const playMetrButton = document.getElementById('playmetr');
-if (playMetrButton) {
-    playMetrButton.onclick = () => {
-        if (isPlaying) {
-            // Currently playing, so stop the metronome
-            stopMetronome();
-            playMetrButton.textContent = 'Start Metronome';
-            isPlaying = false;
-        } else {
-            // Not playing, so start the metronome and save user prefs
-            isPlaying = true;
-            sendUserPrefs();
-            startMetronome(currentBPM, isPlaying);
-            playMetrButton.textContent = 'Stop Metronome';
-        }
-    };
-}
 // Update the setupBPMTouchControl function:
 function setupBPMTouchControl() {
     const bpmControl = document.querySelector('.bpm-control');
@@ -198,10 +180,27 @@ if (window.Telegram && Telegram.WebApp) {
         showErrorMessage("This app only works inside Telegram");
     });
 }
-
 function showErrorMessage(message) {
     document.body.innerHTML = `<div class="telegram-error">${message}</div>`;
-} 
+}
+// --- Metronome Play/Stop Button Handler ---
+const playMetrButton = document.getElementById('playmetr');
+if (playMetrButton) {
+    playMetrButton.onclick = () => {
+        if (isPlaying) {
+            // Currently playing, so stop the metronome
+            stopMetronome();
+            playMetrButton.textContent = 'Start Metronome';
+            isPlaying = false;
+        } else {
+            // Not playing, so start the metronome and save user prefs
+            isPlaying = true;
+            sendUserPrefs();
+            startMetronome(currentBPM, isPlaying);
+            playMetrButton.textContent = 'Stop Metronome';
+        }
+    };
+}
 // Disable context menu
  document.addEventListener('contextmenu', function (e) {
         e.preventDefault();
