@@ -3,9 +3,7 @@ import {
     startMetronome, 
     stopMetronome, 
     updateBPMDisplay, 
-    updateBPMLevelIndicator,
-    setupButtonHandlers,
-    setupBPMTouchControl 
+    updateBPMLevelIndicator
 } from './practice.js';
 export let currentBPM = 90;
 
