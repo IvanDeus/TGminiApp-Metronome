@@ -4,6 +4,7 @@ import { playClick } from './audio.js';
 let currentBPM = 90;
 let isPlaying  = false;
 let userId = null;
+let metronomeIntervalId = null;
 // show padded BPM
 function updateBPMDisplay() {
     const display = document.getElementById('bpm-display');
