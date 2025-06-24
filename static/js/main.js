@@ -1,37 +1,36 @@
 // main.js
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-import { playClick } from './audio.js';
 let currentBPM = 90;
-let isPlaying  = false;
-let userId = null;
+let isPlaying = false;
 let metronomeIntervalId = null;
-// show padded BPM
-function updateBPMDisplay() {
-    const display = document.getElementById('bpm-display');
-    if (display) {
-        const paddedBPM = currentBPM.toString().padStart(3, '0');
-        display.textContent = `BPM: ${paddedBPM}`;
-    }
-}
-// Handle touch/drag on the BPM line
-function updateBPMLevelIndicator() {
-    const bpmLevel = document.querySelector('.bpm-level');
-    if (bpmLevel) {
-        const percentage = ((currentBPM - 24) / (320 - 24)) * 100;
-        bpmLevel.style.width = `${percentage}%`;
-    }
+let userId = null;
+
+function playClick() {
+    const now = audioContext.currentTime;
+    const osc = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    osc.type = 'square';
+    osc.frequency.value = 800;
+    gainNode.gain.setValueAtTime(0, now);
+    gainNode.gain.linearRampToValueAtTime(0.1, now + 0.001);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
+
+    osc.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    osc.start(now);
+    osc.stop(now + 0.02);
 }
 
 function startMetronome() {
-    if (audioContext.state === 'suspended') { audioContext.resume(); }
     // Clear any existing interval to prevent multiple metronomes playing
     if (metronomeIntervalId) {
         clearInterval(metronomeIntervalId);
     }
     const interval = 60000 / currentBPM;
-    playClick(audioContext);
+    playClick();
     metronomeIntervalId = setInterval(() => {
-        if (isPlaying) playClick(audioContext);
+        if (isPlaying) playClick();
     }, interval);
 }
 
@@ -41,10 +40,28 @@ function stopMetronome() {
         metronomeIntervalId = null;
     }
 }
+
+function updateBPMDisplay() {
+    const display = document.getElementById('bpm-display');
+    if (display) {
+        const paddedBPM = currentBPM.toString().padStart(3, '0');
+        display.textContent = `BPM: ${paddedBPM}`;
+    }
+}
+// Function to handle touch/drag on the BPM line
+// Update the BPM level indicator position
+function updateBPMLevelIndicator() {
+    const bpmLevel = document.querySelector('.bpm-level');
+    if (bpmLevel) {
+        const percentage = ((currentBPM - 24) / (320 - 24)) * 100;
+        bpmLevel.style.width = `${percentage}%`;
+    }
+}
 // Update the setupBPMTouchControl function:
 function setupBPMTouchControl() {
     const bpmControl = document.querySelector('.bpm-control');
     if (!bpmControl) return;
+
     let isDragging = false;
     const minBPM = 24;
     const maxBPM = 320;
@@ -84,6 +101,7 @@ function setupBPMTouchControl() {
             sendUserPrefs();
         }
     }
+
     bpmControl.addEventListener('mousedown', handleStart);
     bpmControl.addEventListener('touchstart', handleStart);
     document.addEventListener('mousemove', handleMove);
@@ -92,30 +110,6 @@ function setupBPMTouchControl() {
     document.addEventListener('touchend', handleEnd);
 }
 
-function setupButtonHandlers() {
-    document.getElementById('tempo-up').onclick = () => {
-        if (currentBPM < 320) {
-            currentBPM += 4;
-            // If playing, restart the metronome with the new BPM
-            if (isPlaying) {
-                startMetronome();
-            }
-            updateBPMDisplay();
-            sendUserPrefs();
-        }
-    };
-    document.getElementById('tempo-down').onclick = () => {
-        if (currentBPM > 24) {
-            currentBPM -= 4;
-            // If playing, restart the metronome with the new BPM
-            if (isPlaying) {
-                startMetronome();
-            }
-            updateBPMDisplay();
-            sendUserPrefs();
-        }
-    };
-}  
 // Send user preferences to the server
 function sendUserPrefs() {
     if (userId === null) {
@@ -172,8 +166,8 @@ if (window.Telegram && Telegram.WebApp) {
     })
     .then(data => {
         loadMetronomeHTML(() => {  
+        currentBPM = data.bpm || 90;
         userId = data.user_id;
-        currentBPM = data.bpm || 90; 
         updateBPMDisplay();
         updateBPMLevelIndicator();
         const profilePic = document.getElementById('profile-pic');
@@ -205,6 +199,29 @@ if (window.Telegram && Telegram.WebApp) {
 function showErrorMessage(message) {
     document.body.innerHTML = `<div class="telegram-error">${message}</div>`;
 }
+function setupButtonHandlers() {
+    document.getElementById('tempo-up').onclick = () => {
+        if (currentBPM < 320) {
+            currentBPM += 4;
+            // If playing, restart the metronome with the new BPM
+            if (isPlaying) {
+                startMetronome();
+            }
+            updateBPMDisplay();
+            sendUserPrefs();
+        }
+    };
+    document.getElementById('tempo-down').onclick = () => {
+        if (currentBPM > 24) {
+            currentBPM -= 4;
+            // If playing, restart the metronome with the new BPM
+            if (isPlaying) {
+                startMetronome();
+            }
+            updateBPMDisplay();
+            sendUserPrefs();
+        }
+    };
 // --- Metronome Play/Stop Button Handler ---
 const playMetrButton = document.getElementById('playmetr');
 if (playMetrButton) {
@@ -222,6 +239,7 @@ if (playMetrButton) {
             playMetrButton.textContent = 'Stop Metronome';
         }
     };
+}
 }
 // Disable context menu
  document.addEventListener('contextmenu', function (e) {
