@@ -1,4 +1,5 @@
 // main.js
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 import { playClick } from './audio.js';
 let currentBPM = 90;
 let isPlaying  = false;
@@ -21,7 +22,6 @@ function updateBPMLevelIndicator() {
 }
 
 function startMetronome() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     if (audioContext.state === 'suspended') { audioContext.resume(); }
     // Clear any existing interval to prevent multiple metronomes playing
     if (metronomeIntervalId) {
