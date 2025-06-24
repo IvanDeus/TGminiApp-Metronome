@@ -3,7 +3,7 @@ const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 let metronomeIntervalId = null;
 
-function playClick() {
+export function playClick() {
     const now = audioContext.currentTime;
     const osc = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
