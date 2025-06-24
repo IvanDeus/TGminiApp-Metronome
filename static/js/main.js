@@ -4,7 +4,8 @@ import {
     startMetronome, 
     stopMetronome, 
     updateBPMDisplay, 
-    updateBPMLevelIndicator, 
+    updateBPMLevelIndicator,
+    setupButtonHandlers,
     setupBPMTouchControl 
 } from './practice.js';
 
