@@ -4,7 +4,7 @@ export let currentBPM = 90;
 export let isPlaying = false;
 let metronomeIntervalId = null;
 
-export function playClick() {
+function playClick() {
     const now = audioContext.currentTime;
     const osc = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
