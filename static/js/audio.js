@@ -1,6 +1,5 @@
 // audio.js
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-import { currentBPM, isPlaying } from './main.js';
 
 let metronomeIntervalId = null;
 
@@ -21,7 +20,7 @@ function playClick() {
     osc.stop(now + 0.02);
 }
 
-export function startMetronome() {
+export function startMetronome(currentBPM, isPlaying) {
     // Clear any existing interval to prevent multiple metronomes playing
     if (metronomeIntervalId) {
         clearInterval(metronomeIntervalId);
