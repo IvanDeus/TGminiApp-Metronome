@@ -100,6 +100,80 @@ if (window.Telegram && Telegram.WebApp) {
 function showErrorMessage(message) {
     document.body.innerHTML = `<div class="telegram-error">${message}</div>`;
 }
+// Update the setupBPMTouchControl function:
+function setupBPMTouchControl() {
+    const bpmControl = document.querySelector('.bpm-control');
+    if (!bpmControl) return;
+    let isDragging = false;
+    const minBPM = 24;
+    const maxBPM = 320;
+
+    function calculateBPMFromPosition(clientX) {
+        const rect = bpmControl.getBoundingClientRect();
+        const position = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        return Math.round(minBPM + (maxBPM - minBPM) * position);
+    }
+
+    function handleStart(e) {
+        isDragging = true;
+        handleMove(e); // Update position immediately on start
+        e.preventDefault();
+    }
+
+    function handleMove(e) {
+        if (!isDragging) return;
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        if (clientX) {
+            const newBPM = calculateBPMFromPosition(clientX);
+            if (newBPM !== currentBPM) {
+                currentBPM = newBPM;
+                updateBPMDisplay();
+                updateBPMLevelIndicator(); // Update visual position
+                if (isPlaying) {
+                    startMetronome();
+                }
+            }
+        }
+        e.preventDefault();
+    }
+
+    function handleEnd() {
+        if (isDragging) {
+            isDragging = false;
+            sendUserPrefs();
+        }
+    }
+    bpmControl.addEventListener('mousedown', handleStart);
+    bpmControl.addEventListener('touchstart', handleStart);
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('touchmove', handleMove);
+    document.addEventListener('mouseup', handleEnd);
+    document.addEventListener('touchend', handleEnd);
+}
+
+function setupButtonHandlers() {
+    document.getElementById('tempo-up').onclick = () => {
+        if (currentBPM < 320) {
+            currentBPM += 4;
+            // If playing, restart the metronome with the new BPM
+            if (isPlaying) {
+                startMetronome();
+            }
+            updateBPMDisplay();
+            sendUserPrefs();
+        }
+    };
+    document.getElementById('tempo-down').onclick = () => {
+        if (currentBPM > 24) {
+            currentBPM -= 4;
+            // If playing, restart the metronome with the new BPM
+            if (isPlaying) {
+                startMetronome();
+            }
+            updateBPMDisplay();
+            sendUserPrefs();
+        }
+    };
 // Disable context menu
  document.addEventListener('contextmenu', function (e) {
         e.preventDefault();
