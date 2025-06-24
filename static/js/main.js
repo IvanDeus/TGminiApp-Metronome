@@ -1,5 +1,14 @@
 // main.js
-import * from './practice.js';
+import { 
+    currentBPM, 
+    isPlaying, 
+    startMetronome, 
+    stopMetronome, 
+    updateBPMDisplay, 
+    updateBPMLevelIndicator, 
+    setupBPMTouchControl 
+} from './practice.js';
+
 let userId = null;
 
 // Send user preferences to the server
