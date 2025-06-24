@@ -4,7 +4,7 @@ import {
     stopMetronome
 } from './practice.js';
 export let currentBPM = 90;
-
+export let isPlaying  = False;
 let userId = null;
 
 // Send user preferences to the server
