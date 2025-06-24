@@ -1,5 +1,5 @@
 // main.js
-import { startMetronome, stopMetronome } from './audio.js';
+import { playClick } from './audio.js';
 let currentBPM = 90;
 let isPlaying  = false;
 let userId = null;
@@ -17,6 +17,25 @@ function updateBPMLevelIndicator() {
     if (bpmLevel) {
         const percentage = ((currentBPM - 24) / (320 - 24)) * 100;
         bpmLevel.style.width = `${percentage}%`;
+    }
+}
+
+function startMetronome() {
+    // Clear any existing interval to prevent multiple metronomes playing
+    if (metronomeIntervalId) {
+        clearInterval(metronomeIntervalId);
+    }
+    const interval = 60000 / currentBPM;
+    playClick();
+    metronomeIntervalId = setInterval(() => {
+        if (isPlaying) playClick();
+    }, interval);
+}
+
+function stopMetronome() {
+    if (metronomeIntervalId) {
+        clearInterval(metronomeIntervalId);
+        metronomeIntervalId = null;
     }
 }
 // Update the setupBPMTouchControl function:
@@ -49,7 +68,7 @@ function setupBPMTouchControl() {
                 updateBPMDisplay();
                 updateBPMLevelIndicator(); // Update visual position
                 if (isPlaying) {
-                    startMetronome(currentBPM, isPlaying);
+                    startMetronome();
                 }
             }
         }
@@ -76,7 +95,7 @@ function setupButtonHandlers() {
             currentBPM += 4;
             // If playing, restart the metronome with the new BPM
             if (isPlaying) {
-                startMetronome(currentBPM, isPlaying);
+                startMetronome();
             }
             updateBPMDisplay();
             sendUserPrefs();
@@ -87,7 +106,7 @@ function setupButtonHandlers() {
             currentBPM -= 4;
             // If playing, restart the metronome with the new BPM
             if (isPlaying) {
-                startMetronome(currentBPM, isPlaying);
+                startMetronome();
             }
             updateBPMDisplay();
             sendUserPrefs();
@@ -196,7 +215,7 @@ if (playMetrButton) {
             // Not playing, so start the metronome and save user prefs
             isPlaying = true;
             sendUserPrefs();
-            startMetronome(currentBPM, isPlaying);
+            startMetronome();
             playMetrButton.textContent = 'Stop Metronome';
         }
     };
