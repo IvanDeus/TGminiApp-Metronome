@@ -1,6 +1,5 @@
 // main.js
 import { 
-    currentBPM, 
     startMetronome, 
     stopMetronome, 
     updateBPMDisplay, 
@@ -8,6 +7,7 @@ import {
     setupButtonHandlers,
     setupBPMTouchControl 
 } from './practice.js';
+export let currentBPM = 90;
 
 let userId = null;
 
@@ -68,6 +68,7 @@ if (window.Telegram && Telegram.WebApp) {
     .then(data => {
         loadMetronomeHTML(() => {  
         userId = data.user_id;
+        currentBPM = data.bpm || 90; 
         updateBPMDisplay();
         updateBPMLevelIndicator();
         const profilePic = document.getElementById('profile-pic');
