@@ -1,6 +1,7 @@
 // audio.js
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
+// Resume AudioContext if suspended
+if (audioContext.state === 'suspended') { audioContext.resume(); }
 let metronomeIntervalId = null;
 
 export function playClick() {
