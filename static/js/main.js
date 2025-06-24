@@ -1,13 +1,5 @@
 // main.js
-import { 
-    currentBPM, 
-    isPlaying, 
-    startMetronome, 
-    stopMetronome, 
-    updateBPMDisplay, 
-    updateBPMLevelIndicator, 
-    setupBPMTouchControl 
-} from './practice.js';
+import * as practice from './practice.js';
 
 let userId = null;
 
@@ -19,7 +11,7 @@ function sendUserPrefs() {
     }
     const formData = new URLSearchParams();
     formData.append('user_id', userId);
-    formData.append('bpm', currentBPM);
+    formData.append('bpm', practice.currentBPM);
     //console.log("Sending preferences:", formData.toString());
     if (navigator.sendBeacon) {
         const success = navigator.sendBeacon('update_user_prefs', formData);
@@ -67,7 +59,7 @@ if (window.Telegram && Telegram.WebApp) {
     })
     .then(data => {
         loadMetronomeHTML(() => {  
-        currentBPM = data.bpm || 90;
+        practice.currentBPM = data.bpm || 90;
         userId = data.user_id;
         updateBPMDisplay();
         updateBPMLevelIndicator();
