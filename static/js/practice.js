@@ -39,39 +39,3 @@ export function stopMetronome() {
         metronomeIntervalId = null;
     }
 }
-
-export function updateBPMDisplay() {
-    const display = document.getElementById('bpm-display');
-    if (display) {
-        const paddedBPM = currentBPM.toString().padStart(3, '0');
-        display.textContent = `BPM: ${paddedBPM}`;
-    }
-}
-// Function to handle touch/drag on the BPM line
-// Update the BPM level indicator position
-export function updateBPMLevelIndicator() {
-    const bpmLevel = document.querySelector('.bpm-level');
-    if (bpmLevel) {
-        const percentage = ((currentBPM - 24) / (320 - 24)) * 100;
-        bpmLevel.style.width = `${percentage}%`;
-    }
-}
-// --- Metronome Play/Stop Button Handler ---
-const playMetrButton = document.getElementById('playmetr');
-if (playMetrButton) {
-    playMetrButton.onclick = () => {
-        if (isPlaying) {
-            // Currently playing, so stop the metronome
-            stopMetronome();
-            playMetrButton.textContent = 'Start Metronome';
-            isPlaying = false;
-        } else {
-            // Not playing, so start the metronome and save user prefs
-            isPlaying = true;
-            sendUserPrefs();
-            startMetronome();
-            playMetrButton.textContent = 'Stop Metronome';
-        }
-    };
-}
-}
