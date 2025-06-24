@@ -1,5 +1,6 @@
 // main.js
 import { playClick } from './audio.js';
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 let currentBPM = 90;
 let isPlaying  = false;
 let userId = null;
@@ -26,9 +27,9 @@ function startMetronome() {
         clearInterval(metronomeIntervalId);
     }
     const interval = 60000 / currentBPM;
-    playClick();
+    playClick(audioContext);
     metronomeIntervalId = setInterval(() => {
-        if (isPlaying) playClick();
+        if (isPlaying) playClick(audioContext);
     }, interval);
 }
 
