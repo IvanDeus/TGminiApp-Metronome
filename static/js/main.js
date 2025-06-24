@@ -59,7 +59,6 @@ if (window.Telegram && Telegram.WebApp) {
     })
     .then(data => {
         loadMetronomeHTML(() => {  
-        practice.currentBPM = data.bpm || 90;
         userId = data.user_id;
         updateBPMDisplay();
         updateBPMLevelIndicator();
