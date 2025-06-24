@@ -19,22 +19,3 @@ function playClick() {
     osc.start(now);
     osc.stop(now + 0.02);
 }
-
-export function startMetronome(currentBPM, isPlaying) {
-    // Clear any existing interval to prevent multiple metronomes playing
-    if (metronomeIntervalId) {
-        clearInterval(metronomeIntervalId);
-    }
-    const interval = 60000 / currentBPM;
-    playClick();
-    metronomeIntervalId = setInterval(() => {
-        if (isPlaying) playClick();
-    }, interval);
-}
-
-export function stopMetronome() {
-    if (metronomeIntervalId) {
-        clearInterval(metronomeIntervalId);
-        metronomeIntervalId = null;
-    }
-}
