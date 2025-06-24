@@ -100,25 +100,6 @@ if (window.Telegram && Telegram.WebApp) {
 function showErrorMessage(message) {
     document.body.innerHTML = `<div class="telegram-error">${message}</div>`;
 }
-// --- Metronome Play/Stop Button Handler ---
-const playMetrButton = document.getElementById('playmetr');
-if (playMetrButton) {
-    playMetrButton.onclick = () => {
-        if (isPlaying) {
-            // Currently playing, so stop the metronome
-            stopMetronome();
-            playMetrButton.textContent = 'Start Metronome';
-            isPlaying = false;
-        } else {
-            // Not playing, so start the metronome and save user prefs
-            isPlaying = true;
-            sendUserPrefs();
-            startMetronome();
-            playMetrButton.textContent = 'Stop Metronome';
-        }
-    };
-}
-}
 // Disable context menu
  document.addEventListener('contextmenu', function (e) {
         e.preventDefault();
