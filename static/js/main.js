@@ -1,5 +1,12 @@
 // main.js
-import * as practice from './practice.js';
+import { 
+    currentBPM, 
+    startMetronome, 
+    stopMetronome, 
+    updateBPMDisplay, 
+    updateBPMLevelIndicator, 
+    setupBPMTouchControl 
+} from './practice.js';
 
 let userId = null;
 
@@ -11,7 +18,7 @@ function sendUserPrefs() {
     }
     const formData = new URLSearchParams();
     formData.append('user_id', userId);
-    formData.append('bpm', practice.currentBPM);
+    formData.append('bpm', currentBPM);
     //console.log("Sending preferences:", formData.toString());
     if (navigator.sendBeacon) {
         const success = navigator.sendBeacon('update_user_prefs', formData);
