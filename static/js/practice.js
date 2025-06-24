@@ -108,3 +108,27 @@ export function setupBPMTouchControl() {
     document.addEventListener('mouseup', handleEnd);
     document.addEventListener('touchend', handleEnd);
 }
+
+export function setupButtonHandlers() {
+    document.getElementById('tempo-up').onclick = () => {
+        if (currentBPM < 320) {
+            currentBPM += 4;
+            // If playing, restart the metronome with the new BPM
+            if (isPlaying) {
+                startMetronome();
+            }
+            updateBPMDisplay();
+            sendUserPrefs();
+        }
+    };
+    document.getElementById('tempo-down').onclick = () => {
+        if (currentBPM > 24) {
+            currentBPM -= 4;
+            // If playing, restart the metronome with the new BPM
+            if (isPlaying) {
+                startMetronome();
+            }
+            updateBPMDisplay();
+            sendUserPrefs();
+        }
+    };
