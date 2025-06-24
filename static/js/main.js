@@ -11,6 +11,32 @@ function updateBPMDisplay() {
         display.textContent = `BPM: ${paddedBPM}`;
     }
 }
+// Handle touch/drag on the BPM line
+function updateBPMLevelIndicator() {
+    const bpmLevel = document.querySelector('.bpm-level');
+    if (bpmLevel) {
+        const percentage = ((currentBPM - 24) / (320 - 24)) * 100;
+        bpmLevel.style.width = `${percentage}%`;
+    }
+}
+// --- Metronome Play/Stop Button Handler ---
+const playMetrButton = document.getElementById('playmetr');
+if (playMetrButton) {
+    playMetrButton.onclick = () => {
+        if (isPlaying) {
+            // Currently playing, so stop the metronome
+            stopMetronome();
+            playMetrButton.textContent = 'Start Metronome';
+            isPlaying = false;
+        } else {
+            // Not playing, so start the metronome and save user prefs
+            isPlaying = true;
+            sendUserPrefs();
+            startMetronome();
+            playMetrButton.textContent = 'Stop Metronome';
+        }
+    };
+}
 // Update the setupBPMTouchControl function:
 function setupBPMTouchControl() {
     const bpmControl = document.querySelector('.bpm-control');
@@ -85,33 +111,6 @@ function setupButtonHandlers() {
             sendUserPrefs();
         }
     };
-// Function to handle touch/drag on the BPM line
-// Update the BPM level indicator position
-function updateBPMLevelIndicator() {
-    const bpmLevel = document.querySelector('.bpm-level');
-    if (bpmLevel) {
-        const percentage = ((currentBPM - 24) / (320 - 24)) * 100;
-        bpmLevel.style.width = `${percentage}%`;
-    }
-}
-// --- Metronome Play/Stop Button Handler ---
-const playMetrButton = document.getElementById('playmetr');
-if (playMetrButton) {
-    playMetrButton.onclick = () => {
-        if (isPlaying) {
-            // Currently playing, so stop the metronome
-            stopMetronome();
-            playMetrButton.textContent = 'Start Metronome';
-            isPlaying = false;
-        } else {
-            // Not playing, so start the metronome and save user prefs
-            isPlaying = true;
-            sendUserPrefs();
-            startMetronome();
-            playMetrButton.textContent = 'Stop Metronome';
-        }
-    };
-}
 }  
 // Send user preferences to the server
 function sendUserPrefs() {
