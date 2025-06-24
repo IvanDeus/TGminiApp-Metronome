@@ -10,7 +10,7 @@ function sendUserPrefs() {
     }
     const formData = new URLSearchParams();
     formData.append('user_id', userId);
-    formData.append('bpm', currentBPM);
+    formData.append('bpm', practice.currentBPM);
     //console.log("Sending preferences:", formData.toString());
     if (navigator.sendBeacon) {
         const success = navigator.sendBeacon('update_user_prefs', formData);
@@ -58,7 +58,7 @@ if (window.Telegram && Telegram.WebApp) {
     })
     .then(data => {
         loadMetronomeHTML(() => {  
-        currentBPM = data.bpm || 90;
+        practice.currentBPM = data.bpm || 90;
         userId = data.user_id;
         updateBPMDisplay();
         updateBPMLevelIndicator();
@@ -93,10 +93,10 @@ function showErrorMessage(message) {
 }
 function setupButtonHandlers() {
     document.getElementById('tempo-up').onclick = () => {
-        if (currentBPM < 320) {
-            currentBPM += 4;
+        if (practice.currentBPM < 320) {
+            practice.currentBPM += 4;
             // If playing, restart the metronome with the new BPM
-            if (isPlaying) {
+            if (practice.isPlaying) {
                 startMetronome();
             }
             updateBPMDisplay();
@@ -104,10 +104,10 @@ function setupButtonHandlers() {
         }
     };
     document.getElementById('tempo-down').onclick = () => {
-        if (currentBPM > 24) {
-            currentBPM -= 4;
+        if (practice.currentBPM > 24) {
+            practice.currentBPM -= 4;
             // If playing, restart the metronome with the new BPM
-            if (isPlaying) {
+            if (practice.isPlaying) {
                 startMetronome();
             }
             updateBPMDisplay();
@@ -118,14 +118,14 @@ function setupButtonHandlers() {
 const playMetrButton = document.getElementById('playmetr');
 if (playMetrButton) {
     playMetrButton.onclick = () => {
-        if (isPlaying) {
+        if (practice.isPlaying) {
             // Currently playing, so stop the metronome
             stopMetronome();
             playMetrButton.textContent = 'Start Metronome';
-            isPlaying = false;
+            practice.isPlaying = false;
         } else {
             // Not playing, so start the metronome and save user prefs
-            isPlaying = true;
+            practice.isPlaying = true;
             sendUserPrefs();
             startMetronome();
             playMetrButton.textContent = 'Stop Metronome';
