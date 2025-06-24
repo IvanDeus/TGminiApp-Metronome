@@ -1,7 +1,7 @@
 // main.js
 import { startMetronome, stopMetronome } from './audio.js';
-export let currentBPM = 90;
-export let isPlaying  = false;
+let currentBPM = 90;
+let isPlaying  = false;
 let userId = null;
 // show padded BPM
 function updateBPMDisplay() {
@@ -32,7 +32,7 @@ if (playMetrButton) {
             // Not playing, so start the metronome and save user prefs
             isPlaying = true;
             sendUserPrefs();
-            startMetronome();
+            startMetronome(currentBPM, isPlaying);
             playMetrButton.textContent = 'Stop Metronome';
         }
     };
@@ -67,7 +67,7 @@ function setupBPMTouchControl() {
                 updateBPMDisplay();
                 updateBPMLevelIndicator(); // Update visual position
                 if (isPlaying) {
-                    startMetronome();
+                    startMetronome(currentBPM, isPlaying);
                 }
             }
         }
@@ -94,7 +94,7 @@ function setupButtonHandlers() {
             currentBPM += 4;
             // If playing, restart the metronome with the new BPM
             if (isPlaying) {
-                startMetronome();
+                startMetronome(currentBPM, isPlaying);
             }
             updateBPMDisplay();
             sendUserPrefs();
@@ -105,7 +105,7 @@ function setupButtonHandlers() {
             currentBPM -= 4;
             // If playing, restart the metronome with the new BPM
             if (isPlaying) {
-                startMetronome();
+                startMetronome(currentBPM, isPlaying);
             }
             updateBPMDisplay();
             sendUserPrefs();
