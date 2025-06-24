@@ -1,7 +1,7 @@
 // main.js
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 export let currentBPM = 90;
-export let isPlaying = false;
+let isPlaying = false;
 let metronomeIntervalId = null;
 
 function playClick() {
